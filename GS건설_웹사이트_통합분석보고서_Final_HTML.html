@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GS E&C 웹사이트 리뉴얼 분석 보고서</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:#006B3C; --green-d:#004D29; --green-m:#2E9E68; --green-l:#E6F4ED; --green-xl:#F2FAF6;
+  --ink:#0D0F12; --ink-2:#2C2F35; --ink-3:#5C6370; --ink-4:#9AA0AB;
+  --line:#E2E6EA; --line-l:#F0F3F6; --bg:#F5F7FA; --white:#FFFFFF;
+  --red:#C8291E; --red-l:#FCECEA; --amber:#C97A00; --amber-l:#FEF4E0;
+  --blue:#1A4EC7; --blue-l:#EDF2FF; --purple:#6B3FA0; --purple-l:#F0EAFA;
+  --navy:#1B3A6B; --navy-l:#E8EDF8;
+  --mono:'IBM Plex Mono',monospace; --sans:'Noto Sans KR',sans-serif; --display:'Bebas Neue',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased}
+
+/* ─── COVER ─── */
+.cover{background:linear-gradient(135deg,#0A1A0F 0%,#0D2A18 50%,#0A1A0F 100%);padding:56px 64px 48px;position:relative;overflow:hidden}
+.cover-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,107,60,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,107,60,.06) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.cover-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--green-m);margin-bottom:16px}
+.cover-tag::before{content:'';display:block;width:24px;height:2px;background:var(--green-m)}
+.cover h1{font-size:40px;font-weight:900;color:#fff;line-height:1.15;letter-spacing:-1.5px;margin-bottom:8px}
+.cover h1 em{color:var(--green-m);font-style:normal}
+.cover-sub{font-size:13px;color:#6A7A6F;margin-bottom:32px;max-width:600px}
+.cover-meta{display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:20px}
+.mc{font-family:var(--mono);font-size:11px;padding:4px 12px;border-radius:4px;font-weight:500}
+.mc-g{background:rgba(46,158,104,.15);color:var(--green-m);border:1px solid rgba(46,158,104,.25)}
+.mc-d{background:rgba(255,255,255,.05);color:#888;border:1px solid rgba(255,255,255,.08)}
+
+/* ─── TAB NAV ─── */
+.tab-nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.97);backdrop-filter:blur(16px);border-bottom:2px solid var(--line);display:flex;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--ink-3);background:none;border:none;border-bottom:3px solid transparent;padding:0 18px;height:48px;cursor:pointer;white-space:nowrap;transition:color .2s,border-color .2s;display:flex;align-items:center;gap:6px}
+.tab-btn:hover{color:var(--green)}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-num{font-size:9px;opacity:.6}
+
+/* ─── TAB CONTENT ─── */
+.tab-panel{display:none;padding:40px 48px 80px;max-width:1240px;margin:0 auto}
+.tab-panel.active{display:block}
+
+/* ─── SECTION ─── */
+.section{margin-top:56px}
+.section:first-child{margin-top:0}
+.sec-head{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid var(--ink)}
+.sec-num{font-family:var(--display);font-size:32px;color:var(--green);line-height:1;flex-shrink:0}
+.sec-title{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--ink);line-height:1.2}
+.sec-en{font-family:var(--mono);font-size:10px;color:var(--ink-4);letter-spacing:.06em;margin-top:2px}
+.sec-divider{height:1px;background:linear-gradient(90deg,var(--green) 0%,var(--green-l) 40%,transparent 100%);margin-top:56px}
+
+/* ─── CARD ─── */
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--line-l);display:flex;align-items:center;gap:8px}
+.ctdot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* ─── BADGE ─── */
+.badge{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 9px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.b-red{background:var(--red-l);color:var(--red)} .b-amb{background:var(--amber-l);color:var(--amber)}
+.b-grn{background:var(--green-l);color:var(--green)} .b-blu{background:var(--blue-l);color:var(--blue)}
+.b-pur{background:var(--purple-l);color:var(--purple)} .b-gry{background:var(--line-l);color:var(--ink-3);border:1px solid var(--line)}
+.b-nav{background:var(--navy-l);color:var(--navy)}
+
+/* ─── TABLE ─── */
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl thead th{background:var(--ink);color:#fff;font-size:11px;font-weight:600;letter-spacing:.03em;padding:12px 14px;text-align:left}
+.tbl tbody td{padding:12px 14px;border-bottom:1px solid var(--line-l);color:var(--ink-2);vertical-align:top;line-height:1.6}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--green-xl)}
+code{font-family:var(--mono);font-size:11px;background:var(--line-l);padding:2px 6px;border-radius:4px;color:var(--ink-2)}
+
+/* ─── CALLOUT ─── */
+.callout{display:flex;gap:10px;padding:12px 16px;border-radius:8px;font-size:12.5px;line-height:1.65;margin-top:10px}
+.c-warn{background:var(--amber-l);color:#7A4E00;border-left:3px solid var(--amber)}
+.c-err{background:var(--red-l);color:#7A1A14;border-left:3px solid var(--red)}
+.c-info{background:var(--blue-l);color:#14348C;border-left:3px solid var(--blue)}
+.c-ok{background:var(--green-l);color:var(--green-d);border-left:3px solid var(--green)}
+.c-pur{background:var(--purple-l);color:#4A2070;border-left:3px solid var(--purple)}
+
+/* ─── GRID LAYOUTS ─── */
+.col2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.col3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.col4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+
+/* ─── KF / STAT ─── */
+.kf-box{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:20px;text-align:center}
+.kf-num{font-family:var(--display);font-size:36px;color:var(--green);line-height:1;margin-bottom:4px}
+.kf-label{font-size:12px;color:var(--ink-3);line-height:1.5}
+.kf-sub{font-family:var(--mono);font-size:10px;color:var(--ink-4);margin-top:3px}
+
+/* ─── ISSUE CARDS ─── */
+.issue-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.icard{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.icard.h{border-top:3px solid var(--red)} .icard.m{border-top:3px solid var(--amber)} .icard.l{border-top:3px solid var(--blue)}
+.ihead{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ititle{font-size:13px;font-weight:700;color:var(--ink)}
+.ibody{font-size:12.5px;color:var(--ink-3);line-height:1.7}
+.ifix{margin-top:10px;padding-top:10px;border-top:1px solid var(--line-l);font-size:12px;color:var(--ink-2)}
+.ifix::before{content:'→ 개선: ';color:var(--green);font-weight:700}
+
+/* ─── UX 비교표 ─── */
+.ux-compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.ux-col{padding:20px 22px}
+.ux-col.asis{background:#FFF8F7;border-right:1px solid var(--line)}
+.ux-col.tobe{background:var(--green-xl)}
+.ux-col-head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid}
+.ux-col.asis .ux-col-head{color:var(--red);border-color:var(--red)}
+.ux-col.tobe .ux-col-head{color:var(--green);border-color:var(--green)}
+.ux-item{font-size:12.5px;line-height:1.65;color:var(--ink-2);padding:6px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.ux-item:last-child{border-bottom:none}
+
+/* ─── PRIORITY TABLE ─── */
+.pri-row{display:grid;grid-template-columns:100px 1fr 100px;gap:16px;padding:14px 18px;border-radius:8px;margin-bottom:8px;align-items:start}
+.pri-row.p1{background:#FFF0EF;border:1px solid #F5C0BB}
+.pri-row.p2{background:#FEF8EE;border:1px solid #F0D89A}
+.pri-row.p3{background:#EEF3FF;border:1px solid #B8CEF0}
+.pri-row.p4{background:#F2FAF6;border:1px solid #9FDBBC}
+.ptitle{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.pdesc{font-size:12px;color:var(--ink-3);line-height:1.6}
+.parea{font-family:var(--mono);font-size:10px;color:var(--ink-4);text-align:right}
+
+/* ─── BRAND VISION ─── */
+.brand-vision{background:linear-gradient(135deg,var(--green-d) 0%,#007A45 100%);border-radius:14px;padding:28px 32px;margin-bottom:14px;color:#fff;position:relative;overflow:hidden}
+.brand-vision::before{content:'';position:absolute;right:-40px;bottom:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.bv-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:10px}
+.bv-text{font-size:18px;font-weight:700;color:#fff;line-height:1.45;letter-spacing:-.3px}
+.bv-sub{font-size:12.5px;color:rgba(255,255,255,.65);margin-top:6px}
+
+.cv-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.cv-tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 10px;border-radius:20px;margin-bottom:8px}
+.cv-tag.goal{background:var(--green-l);color:var(--green)} .cv-tag.base{background:var(--blue-l);color:var(--blue)}
+.cv-name{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.cv-desc{font-size:12px;color:var(--ink-3);line-height:1.65}
+
+/* ─── ROADMAP ─── */
+.rm-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.rm-box{border-radius:12px;padding:22px 24px;border:2px solid}
+.rm-box.phase1{background:#FFF5F0;border-color:#E8A080}
+.rm-box.phase2{background:#FFFBF0;border-color:#D4B860}
+.rm-box.phase3{background:#F0F8FF;border-color:#80B0D8}
+.rm-label{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.rm-period{font-family:var(--mono);font-size:10px;color:var(--ink-4);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(0,0,0,.08)}
+.rm-item{font-size:12.5px;color:var(--ink-2);padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05);line-height:1.5}
+.rm-item:last-child{border-bottom:none}
+.rm-item::before{content:'•  ';color:var(--green-m)}
+
+/* ─── IMPROVE GRID ─── */
+.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.imp-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:22px 24px}
+.imp-icon{font-size:24px;margin-bottom:10px}
+.imp-title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.imp-desc{font-size:12.5px;color:var(--ink-3);line-height:1.7}
+.imp-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.ftag{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:20px;font-weight:600}
+.ft-g{background:var(--green-l);color:var(--green)} .ft-a{background:var(--amber-l);color:var(--amber)}
+.ft-b{background:var(--blue-l);color:var(--blue)} .ft-p{background:var(--purple-l);color:var(--purple)}
+.ft-r{background:var(--red-l);color:var(--red)}
+
+/* ─── MENU DETAIL ─── */
+.menu-header{border-radius:12px;padding:22px 28px;margin-bottom:20px;color:#fff;position:relative;overflow:hidden}
+.menu-header::after{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.mh-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+.mh-title{font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:4px}
+.mh-sub{font-size:12.5px;opacity:.75}
+.submenu-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.sm-tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;padding:3px 12px;border-radius:20px;font-weight:500}
+.sm-tag.ext{background:rgba(255,200,100,.2);border-color:rgba(255,200,100,.4)}
+.sm-tag.del{background:rgba(255,100,100,.2);border-color:rgba(255,100,100,.4);text-decoration:line-through;opacity:.7}
+
+/* ─── OVERVIEW SUMMARY CARDS ─── */
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+.sum-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.sum-card.high{border-top:3px solid var(--red)} .sum-card.med{border-top:3px solid var(--amber)} .sum-card.info{border-top:3px solid var(--blue)}
+.sum-num{font-family:var(--display);font-size:32px;line-height:1;margin-bottom:4px}
+.sum-num.red{color:var(--red)} .sum-num.amb{color:var(--amber)} .sum-num.blu{color:var(--blue)} .sum-num.grn{color:var(--green)}
+.sum-label{font-size:12.5px;color:var(--ink-3);line-height:1.55}
+
+/* ─── A11Y GRID ─── */
+.a11y-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.aitem{border-radius:8px;padding:14px 16px}
+.aitem.fail{background:var(--red-l);border:1px solid #F5C0BB}
+.aitem.warn{background:var(--amber-l);border:1px solid #F0D89A}
+.aitem.ok{background:var(--green-l);border:1px solid #9FDBBC}
+.alabel{font-size:12px;font-weight:700;color:var(--ink-2);margin-bottom:4px}
+.adetail{font-size:11.5px;color:var(--ink-3);line-height:1.6}
+
+/* ─── FIX LIST ─── */
+.fix-item{display:grid;grid-template-columns:36px 80px 1fr;gap:12px;padding:14px 16px;border-radius:8px;background:var(--white);border:1px solid var(--line);margin-bottom:8px;align-items:start}
+.fix-num{font-family:var(--display);font-size:22px;color:var(--ink-4);line-height:1}
+.fix-loc{font-family:var(--mono);font-size:10px;color:var(--ink-4);margin-bottom:4px}
+.fix-what{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.fix-det{font-size:12px;color:var(--ink-3);line-height:1.6}
+.fix-act{font-size:12px;color:var(--green-d);margin-top:6px;font-weight:600}
+.fix-act::before{content:'→ '}
+
+/* ═══════════════════════════════════════════════
+   IA STRUCTURE DIAGRAM (AS-IS)
+═══════════════════════════════════════════════ */
+.ia-diagram-wrap{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:28px 24px}
+.ia-title-row{text-align:center;margin-bottom:24px}
+.ia-main-title{font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--ink);margin-bottom:4px}
+.ia-main-sub{font-size:11.5px;color:var(--ink-4);font-family:var(--mono)}
+.ia-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:24px}
+.ia-col{display:flex;flex-direction:column;gap:0}
+.ia-gnb-head{color:#fff;border-radius:8px 8px 0 0;padding:12px 6px;text-align:center;font-size:12px;font-weight:700;line-height:1.35;position:relative}
+.ia-gnb-head::after{content:'↓';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:400}
+.ia-arrow-spacer{height:24px}
+.ia-items{display:flex;flex-direction:column;gap:5px}
+.ia-item{font-size:11px;padding:7px 6px;border-radius:5px;text-align:center;line-height:1.35;border:1px solid var(--line);background:var(--bg);color:var(--ink-2)}
+.ia-item.esg{background:rgba(201,122,0,.12);border-color:#E0B060;color:#7A4E00;font-size:10px}
+.ia-item.ext{background:var(--red-l);border-color:#F5C0BB;color:var(--red)}
+.ia-item.d3{background:var(--amber-l);border-color:#F0D89A;color:#7A4E00;font-size:10px}
+.ia-item.del{background:var(--line-l);border-color:var(--line);color:var(--ink-4);text-decoration:line-through;opacity:.7}
+.ia-item.note{background:var(--blue-l);border-color:#B8CEF0;color:var(--blue);font-size:10px}
+
+/* GNB colors */
+.gnb-회사소개{background:#1B3A6B}
+.gnb-지속가능경영{background:#0D6B4A}
+.gnb-사업영역{background:#4A2A7A}
+.gnb-기술개발{background:#1A3A7A}
+.gnb-투자정보{background:#7A4E1A}
+.gnb-인재채용{background:#8B1C1C}
+.gnb-홍보센터{background:#1A5B5B}
+
+/* ESG 강조박스 */
+.esg-highlight-box{background:rgba(201,122,0,.08);border:2px dashed #D4A040;border-radius:6px;padding:4px 6px;margin:6px 0;text-align:center;font-size:10px;color:#7A4E00;font-weight:700}
+
+/* 인재채용 외부이탈 전체 */
+.ext-badge-full{background:var(--red-l);border:2px solid var(--red);border-radius:6px;padding:4px 6px;margin:4px 0;text-align:center;font-size:10px;color:var(--red);font-weight:700;line-height:1.3}
+
+/* IA 하단 이슈 요약 */
+.ia-issue-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:20px;padding-top:20px;border-top:2px solid var(--line)}
+.ia-issue-card{background:var(--red-l);border:1px solid #F0C0BB;border-radius:10px;padding:14px 16px}
+.ia-issue-card.amber{background:var(--amber-l);border-color:#E0C080}
+.ia-issue-num{font-family:var(--display);font-size:16px;color:var(--red);margin-bottom:4px}
+.ia-issue-card.amber .ia-issue-num{color:var(--amber)}
+.ia-issue-title{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.ia-issue-body{font-size:11px;color:var(--ink-3);line-height:1.6}
+.ia-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3)}
+.ia-legend span{display:flex;align-items:center;gap:6px}
+.ld{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+/* ─── GNB TREE (AS-IS overview) ─── */
+.gnb-overview{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.gnb-col{display:flex;flex-direction:column}
+.gnb-head{color:#fff;border-radius:8px 8px 0 0;padding:11px 6px;text-align:center;font-size:11.5px;font-weight:700;line-height:1.35}
+.gnb-arrow{text-align:center;color:var(--ink-4);font-size:13px;padding:4px 0}
+.gnb-body{display:flex;flex-direction:column;gap:4px}
+.gi{font-size:11px;padding:6px 6px;border-radius:5px;text-align:center;line-height:1.4;border:1px solid var(--line);background:var(--bg);color:var(--ink-2)}
+.gi.d3{background:var(--amber-l);border-color:#E8C870;color:#7A4E00}
+.gi.ext{background:var(--blue-l);border-color:#BFD4FF;color:var(--blue)}
+.gi.off{background:var(--red-l);border-color:#F5BFBB;color:var(--red);text-decoration:line-through;opacity:.8}
+.gnb-leg{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3)}
+.gnb-leg span{display:flex;align-items:center;gap:6px}
+
+/* ─── MAIN PAGE SECTION ─── */
+.page-sections{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pcard{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.pcard-name{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line-l);display:flex;align-items:center;gap:8px}
+.pcard-body{font-size:12px;color:var(--ink-3);line-height:1.65}
+.pprob{font-size:11.5px;color:var(--red);margin-top:8px;padding-top:6px;border-top:1px solid var(--red-l)}
+.pprob::before{content:'⚠ '}
+
+/* 우선순위 매트릭스 */
+.pri-section{margin-bottom:16px}
+.pri-section-title{font-size:11px;font-family:var(--mono);font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:4px;margin-bottom:8px;display:inline-block}
+.ps-p1{background:var(--red-l);color:var(--red)}
+.ps-p2{background:var(--amber-l);color:var(--amber)}
+.ps-p3{background:var(--blue-l);color:var(--blue)}
+.ps-p4{background:var(--green-l);color:var(--green)}
+
+/* 개선 우선순위 별표 */
+.star-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.star-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.star-val{font-size:18px;margin-bottom:4px}
+.star-title{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.star-desc{font-size:11px;color:var(--ink-3);line-height:1.55}
+
+/* benchmark */
+.bm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bm-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.bm-tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-bottom:8px;display:inline-block}
+.bm-kr{background:var(--navy-l);color:var(--navy)} .bm-gl{background:var(--green-l);color:var(--green-d)}
+.bm-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.bm-desc{font-size:12px;color:var(--ink-3);line-height:1.6}
+
+/* mobile */
+@media(max-width:768px){
+  .cover{padding:36px 24px 32px}
+  .cover h1{font-size:28px}
+  .tab-panel{padding:24px 20px 60px}
+  .col2,.col3,.col4,.issue-grid,.imp-grid,.rm-grid,.col-2{grid-template-columns:1fr}
+  .ia-grid,.gnb-overview{grid-template-columns:repeat(4,1fr)}
+  .ux-compare{grid-template-columns:1fr}
+  .ux-col.asis{border-right:none;border-bottom:1px solid var(--line)}
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .a11y-grid,.page-sections,.star-grid,.bm-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ COVER ══════════ -->
+<div class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-tag">Website Renewal · Strategy Report</div>
+  <h1>GS E&C<br><em>웹사이트 분석 보고서</em></h1>
+  <p class="cover-sub">www.gsenc.com 현행 사이트 진단 · GNB 메뉴별 UX 분석 · AS-IS 구조도 · 리뉴얼 전략 및 로드맵</p>
+  <div class="cover-meta">
+    <span class="mc mc-g">분석 대상: gsenc.com (KR/EN)</span>
+    <span class="mc mc-g">기술 스택: ASP.NET + jQuery 1.11.3</span>
+    <span class="mc mc-g">분석 범위: GNB 7개 메뉴 + 하위 전체</span>
+    <span class="mc mc-d">분석일: 2026.03</span>
+    <span class="mc mc-d">출처 기반 실증 분석</span>
+  </div>
+</div>
+
+<!-- ══════════ TAB NAV ══════════ -->
+<nav class="tab-nav" id="tabNav">
+  <button class="tab-btn active" data-tab="t0"><span class="tab-num">00</span> 개요</button>
+  <button class="tab-btn" data-tab="t1"><span class="tab-num">01</span> 브랜드 &amp; 기술환경</button>
+  <button class="tab-btn" data-tab="t2"><span class="tab-num">02</span> GNB &amp; IA 구조도</button>
+  <button class="tab-btn" data-tab="t3"><span class="tab-num">03</span> 홈 (메인)</button>
+  <button class="tab-btn" data-tab="t4"><span class="tab-num">04</span> 회사소개</button>
+  <button class="tab-btn" data-tab="t5"><span class="tab-num">05</span> 지속가능경영</button>
+  <button class="tab-btn" data-tab="t6"><span class="tab-num">06</span> 사업영역 &amp; 기술개발</button>
+  <button class="tab-btn" data-tab="t7"><span class="tab-num">07</span> 투자정보 &amp; 홍보센터</button>
+  <button class="tab-btn" data-tab="t8"><span class="tab-num">08</span> 공통 UX &amp; 기술 이슈</button>
+  <button class="tab-btn" data-tab="t9"><span class="tab-num">09</span> 전략 &amp; 로드맵</button>
+  <button class="tab-btn" data-tab="t10"><span class="tab-num">10</span> 소스코드 버그</button>
+  <button class="tab-btn" data-tab="t11"><span class="tab-num">11</span> 결론 &amp; 제언</button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     TAB 00 — 개요
+══════════════════════════════════════ -->
+<div class="tab-panel active" id="t0">
+
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">00</div>
+      <div><div class="sec-title">보고서 개요 및 핵심 인사이트</div><div class="sec-en">Overview & Key Insights</div></div>
+    </div>
+
+    <div class="col4" style="margin-bottom:20px">
+      <div class="kf-box"><div class="kf-num" style="color:var(--red)">7</div><div class="kf-label">현행 GNB 메뉴 수<br>(Hick's Law 위반 수준)</div></div>
+      <div class="kf-box"><div class="kf-num" style="color:var(--red)">6</div><div class="kf-label">인재채용 전체 이탈<br>외부 도메인 항목</div></div>
+      <div class="kf-box"><div class="kf-num" style="color:var(--amber)">19</div><div class="kf-label">소스코드 즉시 수정<br>가능 버그 건수</div></div>
+      <div class="kf-box"><div class="kf-num" style="color:var(--amber)">12</div><div class="kf-label">jQuery 버전 노후화<br>연도 (2014년 출시)</div></div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="sum-card high"><div class="sum-num red">6</div><div class="sum-label"><strong>HIGH 심각도 이슈</strong><br>Sticky 헤더·인재채용 외부이탈·Xi 부재·핵심정보 미노출·Quick Link 오기재·viewport 강제차단</div></div>
+      <div class="sum-card med"><div class="sum-num amb">9</div><div class="sum-label"><strong>MED 심각도 이슈</strong><br>3depth 과다, GNB 메뉴 과다, Breadcrumb 불일치, Story 중복, Hero CTA 부재 등 구조적 UX 문제</div></div>
+      <div class="sum-card info"><div class="sum-num blu">3</div><div class="sum-label"><strong>LOW 심각도 이슈</strong><br>슬라이더 Pause 미적용, ENG 버튼 가시성, 포커스 인디케이터 미적용</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>분석 대상 사이트 개요</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>항목</th><th>현황</th><th>핵심 문제</th></tr></thead>
+        <tbody>
+          <tr><td><strong>URL</strong></td><td>www.gsenc.com</td><td>파라미터 기반 URL (?Lang=ko&Step=1) — SEO 불리</td></tr>
+          <tr><td><strong>기술 스택</strong></td><td>ASP.NET + jQuery 1.11.3</td><td>2014년 수준 레거시. IE 8/9/10 대응 코드 잔존</td></tr>
+          <tr><td><strong>GNB 구조</strong></td><td>7개 메뉴 (2depth 기본, 투자정보 3depth)</td><td>인재채용 전체 6개 항목 외부 도메인 이탈</td></tr>
+          <tr><td><strong>반응형</strong></td><td>viewport meta 있으나 PC 고정폭 혼용</td><td>maximum-scale=1.0 핀치줌 강제 차단 (WCAG 위반)</td></tr>
+          <tr><td><strong>Analytics</strong></td><td>네이버 Analytics(WCS)만 사용</td><td>글로벌 방문자 분석 불가. GA4/GTM 미도입</td></tr>
+          <tr><td><strong>SNS</strong></td><td>YouTube / Instagram / Naver Blog</td><td>Schema.org에 미운영 Facebook 등록 → 오정보</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="card" style="margin-top:0">
+      <div class="card-title"><span class="ctdot"></span>탭별 분석 콘텐츠 안내</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>탭</th><th>내용</th><th>핵심 발견</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge b-gry">01</span> 브랜드 & 기술환경</td><td>2024 비전, 6대 핵심가치, 회사 현황(신뢰회복·자이 리이그나이트·신사업·사업구조), 기술 스택 진단</td><td>Key Figures 미노출 + 신사업 4개 웹 미등재</td></tr>
+          <tr><td><span class="badge b-gry">02</span> GNB & IA 구조도</td><td>현행 7개 메뉴 AS-IS 구조도 (HTML 재현)</td><td>GNB 과다 + 채용 전체 이탈</td></tr>
+          <tr><td><span class="badge b-gry">03</span> 홈 (메인)</td><td>8개 섹션별 UX 진단 + 버그 목록</td><td>Quick Link 오기재, 슬라이더 CTA 전무</td></tr>
+          <tr><td><span class="badge b-gry">04</span> 회사소개</td><td>7개 서브메뉴 AS-IS 분석, 개선 방향</td><td>수상실적·해외지사 탐색성 낮음</td></tr>
+          <tr><td><span class="badge b-gry">05</span> 지속가능경영</td><td>8개 서브메뉴, ESG 데이터 표현 문제</td><td>내부 보고서 목차 이식 구조</td></tr>
+          <tr><td><span class="badge b-gry">06</span> 사업영역 & 기술개발</td><td>포트폴리오 UX, 기술 역량 전달 문제</td><td>'레져' 오탈자, 전력사업 JS 잔존</td></tr>
+          <tr><td><span class="badge b-gry">07</span> 투자정보 & 홍보센터</td><td>IR 3depth 문제, BBS URL, 뉴스룸 전환</td><td>재무 데이터 나열, 검색 기능 부재</td></tr>
+          <tr><td><span class="badge b-gry">08</span> 공통 UX & 기술</td><td>HIGH 6건 / MED 9건 / LOW 3건, WCAG 접근성, SEO 4건, 소스버그 19건</td><td>canonical 전 페이지 홈 고정 — 검색 색인 치명 손실</td></tr>
+          <tr><td><span class="badge b-gry">09</span> 전략 & 로드맵</td><td>개선 전략, P1~P6 우선순위, 6단계 로드맵</td><td>즉시 수정 → 단기 → 전면 리뉴얼</td></tr>
+          <tr><td><span class="badge b-red">10</span> 소스코드 버그</td><td>즉시 수정 가능 버그 19건 전체 목록, HIGH/MED/LOW 분류</td><td>#14 lang 비표준, #15 hreflang 미적용 포함 — 최우선 처리</td></tr>
+          <tr><td><span class="badge b-grn">11</span> 결론 & 제언</td><td>3대 핵심 개선 방향 요약, 6개 기대 효과, 분석 방법론</td><td>레거시 탈피 · 데이터 시각화 · 탐색성 개선</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 01 — 브랜드 & 기술환경
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t1">
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">01</div><div><div class="sec-title">브랜드 가치 및 기술 환경</div><div class="sec-en">Brand Identity & Technical Environment</div></div></div>
+
+    <div class="brand-vision">
+      <div class="bv-label">Vision Statement · 2024.07 허윤홍 대표이사</div>
+      <div class="bv-text">"투명한 신뢰와 끊임없는 혁신으로<br>더 안전하고 행복한 삶의 미래를 완성합니다"</div>
+      <div class="bv-sub">GS건설은 2024년 7월 새 비전을 선포했습니다. 리뉴얼 방향은 이 비전을 디지털 접점에서 구현하는 것이어야 합니다.</div>
+    </div>
+
+    <div class="callout c-err" style="margin-bottom:20px">⚠ 현재 메인 페이지에는 기업 규모를 보여주는 수치(설립연도·매출·임직원·ESG등급)가 <strong>전혀 노출되지 않습니다.</strong> 방문자가 한눈에 신뢰도를 파악할 수 없는 상태입니다.</div>
+
+    <div class="col4" style="margin-bottom:20px">
+      <div class="kf-box"><div class="kf-num">1969</div><div class="kf-label">설립 연도</div><div class="kf-sub">55년 이상 역사</div></div>
+      <div class="kf-box"><div class="kf-num">$9.4B</div><div class="kf-label">2024년 연간 매출</div><div class="kf-sub">GlobalData 기준</div></div>
+      <div class="kf-box"><div class="kf-num">5,483</div><div class="kf-label">전체 임직원 수</div><div class="kf-sub">GlobalData 기준</div></div>
+      <div class="kf-box"><div class="kf-num">ESG A</div><div class="kf-label">ESG 등급</div><div class="kf-sub">DJSI 11년 연속</div></div>
+    </div>
+
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>실제 보유 브랜드 자산</th><th>현재 웹사이트 노출 현황</th><th>리뉴얼 반영 방향</th></tr></thead>
+      <tbody>
+        <tr><td><strong>설립 1969년 / 55년 이상 역사</strong></td><td>연혁 탭에만 텍스트로 존재</td><td>Key Figures 섹션 신설</td></tr>
+        <tr><td><strong>수주잔고 약 60조 원</strong></td><td><span class="badge b-red">미노출</span></td><td>About / Key Figures</td></tr>
+        <tr><td><strong>DJSI 11년 연속 / CDP A- / KCGS 통합 A (환경 A / 사회 A+ / 지배구조 B+)</strong></td><td>텍스트만 — 시각화 없음</td><td>ESG 뱃지·인포그래픽화</td></tr>
+        <tr><td><strong>자이 GCSI 19년 연속 1위</strong></td><td><span class="badge b-red">미노출</span></td><td>브랜드 스토리 섹션</td></tr>
+        <tr><td><strong>데이터센터 10개 시공 실적</strong></td><td><span class="badge b-red">사업영역 미등재</span></td><td>TO-BE IA 신사업 섹션 신설</td></tr>
+        <tr><td><strong>새 비전 (2024.07)</strong></td><td><span class="badge b-red">메인 페이지 미노출</span></td><td>Hero 섹션 반영</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>6대 핵심가치 — 웹사이트 리뉴얼 연결</div>
+      <div class="col3">
+        <div class="cv-card"><div class="cv-tag goal">목표가치</div><div class="cv-name">고객지향</div><div class="cv-desc">UX 결정의 최우선 기준. 모든 콘텐츠·IA·인터랙션은 고객 관점에서 설계되어야 합니다.</div></div>
+        <div class="cv-card"><div class="cv-tag goal">목표가치</div><div class="cv-name">신뢰</div><div class="cv-desc">검단 이후 투명한 정보 공개. 오류 없는 웹사이트 운영이 신뢰 회복의 기본입니다.</div></div>
+        <div class="cv-card"><div class="cv-tag base">기반가치</div><div class="cv-name">자율과 책임</div><div class="cv-desc">콘텐츠 오너십과 유지관리 체계 구축으로 실천합니다.</div></div>
+        <div class="cv-card"><div class="cv-tag base">기반가치</div><div class="cv-name">정도경영</div><div class="cv-desc">접근성·개인정보 법적 준수, 정확한 정보, 오기재 제로 달성이 목표입니다.</div></div>
+        <div class="cv-card"><div class="cv-tag base">기반가치</div><div class="cv-name">미래지향</div><div class="cv-desc">ESG·데이터센터·스마트양식 등 신사업 확장을 웹에서도 최신 기술로 표현합니다.</div></div>
+        <div class="cv-card"><div class="cv-tag base">기반가치</div><div class="cv-name">전문성</div><div class="cv-desc">55년 건설·엔지니어링 역량을 포트폴리오로 시각화하여 전달합니다.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <!-- 1.3 웹사이트 IA 설계에 직결되는 회사 현황 -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">1-3</div><div><div class="sec-title">웹사이트 IA 설계에 직결되는 회사 현황</div><div class="sec-en">Strategic Context · Direct Impact on IA & Tone</div></div></div>
+    <div class="callout c-info" style="margin-bottom:20px">💡 아래 내용은 리뉴얼 시 콘텐츠 구성·IA·톤앤매너 결정에 <strong>직접 영향을 주는 항목</strong>만 정리한 것입니다.</div>
+
+    <!-- ① 신뢰 회복 맥락 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title"><span class="ctdot"></span>① 신뢰 회복이라는 리뉴얼 핵심 맥락</div>
+      <p style="font-size:13px;color:var(--ink-2);line-height:1.8;margin-bottom:10px">2023년 검단신도시 아파트 지하주차장 붕괴 사고 이후 GS건설은 전사적 쇄신에 착수했습니다. 허윤홍 대표 취임(2023.10) 이후 2024년 흑자 전환, 창사 최대 신규수주 달성, 자이 브랜드 리뉴얼을 이루었습니다.</p>
+      <div class="callout c-ok" style="margin-top:0">웹사이트 리뉴얼은 단순한 디자인 개편이 아니라, <strong>이 브랜드 회복 서사를 공식 채널에서 전달하는 역할</strong>을 합니다. 투명한 정보 공개, 오류 없는 운영, 신뢰 수치의 가시화가 핵심 방향이 됩니다.</div>
+    </div>
+
+    <!-- ② 자이 리이그나이트 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title"><span class="ctdot"></span>② 자이 리이그나이트 (2024.11) — 톤앤매너·카피 방향</div>
+      <p style="font-size:13px;color:var(--ink-2);line-height:1.8;margin-bottom:14px">2024년 11월 'Xi Re-ignite' 행사를 통해 자이 브랜드 철학이 변경되었습니다. 웹사이트 카피·비주얼·인터랙션의 기준 방향이 됩니다.</p>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>항목</th><th>변경 전</th><th>변경 후</th></tr></thead>
+        <tbody>
+          <tr><td><strong>브랜드 의미</strong></td><td>eXtra Intelligent (특별한 지성)</td><td><strong>eXperience Inspiration</strong> (일상이 특별해지는 경험)</td></tr>
+          <tr><td><strong>철학 방향</strong></td><td>공급자 중심</td><td><strong>사용자 경험 중심</strong></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- ③ 신사업 포트폴리오 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title"><span class="ctdot"></span>③ 신사업 포트폴리오 — 사업영역 IA 추가 항목 근거</div>
+      <p style="font-size:13px;color:var(--ink-2);line-height:1.8;margin-bottom:14px">현재 사업영역 메뉴에 누락된 신사업 4개 축입니다. <strong>TO-BE IA '그린·신사업' 섹션 신설</strong>의 직접 근거입니다.</p>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>신사업</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td><strong>모듈러 주택</strong></td><td>자이가이스트(국내)·단우드(폴란드) 운영. 프리패브실 독립 신설(2025.Q1)</td></tr>
+          <tr><td><strong>데이터센터</strong></td><td>기획·설계·시공·운영 통합 DC 디벨로퍼. 에포크 안양 등 10개 시공 실적</td></tr>
+          <tr><td><strong>UAM</strong></td><td>버티포트 부지선정·설계·시공·운영 통합 솔루션 개발 중</td></tr>
+          <tr><td><strong>스마트양식</strong></td><td>부산 기장 에코아쿠아팜. 2026년 하반기 연어 연간 500톤 출하 예정</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- ④ 사업 구조 변화 -->
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>④ 사업 구조 변화 — Our Business 노출 우선순위 근거</div>
+      <p style="font-size:13px;color:var(--ink-2);line-height:1.8;margin-bottom:14px">2025년 사업본부별 매출 변화입니다. Our Business 섹션의 <strong>카드 배열 순서 재설계</strong>에 직결됩니다.</p>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>사업본부</th><th>매출 변화</th><th>웹사이트 함의</th></tr></thead>
+        <tbody>
+          <tr><td><strong>플랜트</strong></td><td><span class="badge b-grn">+88.1% 급성장</span></td><td>Our Business 상단 노출 검토</td></tr>
+          <tr><td><strong>인프라</strong></td><td><span class="badge b-blu">+26.7% 증가</span></td><td>성장 부문 강조 필요</td></tr>
+          <tr><td><strong>건축·주택</strong></td><td><span class="badge b-red">-18.1% 감소</span></td><td>자이 브랜드 독립 강화로 보완</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="sec-divider"></div>
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">1-2</div><div><div class="sec-title">현행 기술 환경 진단</div><div class="sec-en">Technical Stack Audit</div></div></div>
+    <div class="callout c-warn" style="margin-bottom:16px">gsenc.com은 현재 2014년 수준의 레거시 기술 스택에 머물러 있습니다. IE 8/9/10 대응 코드 다수 잔존, 보안 패치가 종료된 jQuery 구버전 사용, 파라미터 방식 URL 구조 등이 SEO·성능·접근성 전반에 복합적인 문제를 야기합니다.</div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>항목</th><th>현황</th><th>문제점</th><th>권장 방향</th></tr></thead>
+      <tbody>
+        <tr><td><strong>프레임워크</strong></td><td>ASP.NET (.aspx)</td><td>레거시 기술. 현대 프론트엔드 빌드 파이프라인 적용 불가. 유지보수 인력 희소</td><td><code>Next.js / React</code> 기반 전환</td></tr>
+        <tr><td><strong>jQuery 버전</strong></td><td><span class="badge b-red">1.11.3 (2014)</span></td><td>12년 이상 구버전. 보안 패치 종료. migrate 플러그인 의존. IE 8/9/10 대응 코드 번들 비대화</td><td>최신 버전 또는 Vanilla JS 전환</td></tr>
+        <tr><td><strong>슬라이더</strong></td><td>bxSlider</td><td>2021년 이후 업데이트 없음. 접근성 지원 부족</td><td>Swiper.js 또는 CSS 기반 전환</td></tr>
+        <tr><td><strong>URL 구조</strong></td><td><code>?Lang=ko&Step=1</code></td><td>SEO 중복 인덱싱 우려. 공유 시 가독성 없음. 절대 URL 하드코딩 및 http/https 혼용</td><td><code>/business/plant/</code> 의미론적 URL</td></tr>
+        <tr><td><strong>Analytics</strong></td><td>네이버 Analytics(WCS)만</td><td>글로벌 방문자 분석 불가. A/B 테스트 불가. GA4/GTM 미확인</td><td>GA4 + GTM 도입 검토</td></tr>
+        <tr><td><strong>반응형</strong></td><td>viewport meta 설정 있으나 PC 중심 고정폭 혼용</td><td>maximum-scale=1.0 핀치줌 강제 차단. 모바일 레이아웃 불완전</td><td>완전한 반응형 (Fluid Grid, 4단계 Breakpoint)</td></tr>
+        <tr><td><strong>소셜 채널</strong></td><td>YouTube / Instagram / Naver Blog</td><td>Facebook은 Schema.org만 등록 (Footer 미노출). 미운영 채널 → Google Knowledge Panel 오정보</td><td>실운영 채널만 유지. SNS 피드 연동</td></tr>
+        <tr><td><strong>패밀리사이트</strong></td><td>Xi Korea, GS칼텍스, GS리테일 드롭다운</td><td>GNB와 Footer 양쪽 중복 노출</td><td>Footer로 일원화</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 02 — GNB & IA 구조도
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t2">
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">02</div><div><div class="sec-title">GNB 구조 분석 & AS-IS IA 구조도</div><div class="sec-en">GNB Structure & Information Architecture (As-Is)</div></div></div>
+
+    <div class="callout c-err" style="margin-bottom:20px">🚨 인재채용 메뉴 전체(6개 항목)가 <strong>외부 도메인(gsenc.recruiter.co.kr)</strong>으로 이탈합니다. 사용자는 GS건설 공식 사이트를 벗어났다고 느끼며, 채용 전환율에 직접적 영향을 줍니다.</div>
+
+    <!-- AS-IS IA 구조도 -->
+    <div class="ia-diagram-wrap">
+      <div class="ia-title-row">
+        <div class="ia-main-title">gsenc.com 현행 IA 구조도 (As-Is)</div>
+        <div class="ia-main-sub">공급자 중심 구조 · GNB 7개 메뉴 · 하위 구조 전체 상세</div>
+      </div>
+
+      <div class="ia-grid">
+        <!-- 회사소개 -->
+        <div class="ia-col">
+          <div class="ia-gnb-head gnb-회사소개">회사소개</div>
+          <div class="ia-arrow-spacer"></div>
+          <div class="ia-items">
+            <div class="ia-item">CEO 인사말</div>
+            <div class="ia-item">비전과 핵심가치</div>
+            <div class="ia-item">경영이념</div>
+            <div class="ia-item">연혁</div>
+            <div class="ia-item">조직도</div>
+            <div class="ia-item">계열사 현황</div>
+            <div class="ia-item">오시는 길</div>
+            <div class="ia-item note" style="font-size:10px">수상실적<br><small>(사이트내 존재)</small></div>
+            <div class="ia-item note" style="font-size:10px">해외지사/법인현황<br><small>(사이트내 존재)</small></div>
+          </div>
+        </div>
+
+        <!-- 지속가능경영 -->
+        <div class="ia-col">
+          <div class="ia-gnb-head gnb-지속가능경영">지속가능경영</div>
+          <div class="ia-arrow-spacer"></div>
+          <div class="ia-items">
+            <div class="esg-highlight-box">▲ ESG 9개 서브메뉴<br>보고서 목차 이식 구조</div>
+            <div class="ia-item esg">경영체계</div>
+            <div class="ia-item esg">안전·보건</div>
+            <div class="ia-item esg">환경</div>
+            <div class="ia-item esg">사회</div>
+            <div class="ia-item esg">지배구조</div>
+            <div class="ia-item esg">GRI Index</div>
+            <div class="ia-item esg">지속가능경영보고서</div>
+            <div class="ia-item del">전략 사업 ×<br><small>삭제됐으나 JS 잔존</small></div>
+          </div>
+        </div>
+
+        <!-- 사업영역 -->
+        <div class="ia-col">
+          <div class="ia-gnb-head gnb-사업영역">사업영역</div>
+          <div class="ia-arrow-spacer"></div>
+          <div class="ia-items">
+            <div class="ia-item">플랜트 사업</div>
+            <div class="ia-item">건축·주택 사업</div>
+            <div class="ia-item">인프라 사업</div>
+            <div class="ia-item">레저 사업<br><small style="color:var(--red)">(소스:'레져'오탈자)</small></div>
+            <div class="ia-item">프리패브 사업</div>
+            <div class="ia-item">프로젝트 검색</div>
+            <div class="ia-item del">전력 사업 ×<br><small>삭제됨 JS잔존</small></div>
+          </div>
+        </div>
+
+        <!-- 기술개발 -->
+        <div class="ia-col">
+          <div class="ia-gnb-head gnb-기술개발">기술개발</div>
+          <div class="ia-arrow-spacer"></div>
+          <div class="ia-items">
+            <div class="ia-item">기술전략</div>
+            <div class="ia-item">보유기술</div>
+            <div class="ia-item">연구시설</div>
+          </div>
+        </div>
+
+        <!-- 투자정보 -->
+        <div class="ia-col">
+          <div class="ia-gnb-head gnb-투자정보">투자정보</div>
+          <div class="ia-arrow-spacer"></div>
+          <div class="ia-items">
+            <div class="ia-item">경영정보</div>
+            <div class="ia-item d3">공시정보<br><span style="font-size:9px">▼ 공시목록·공고정보</span></div>
+            <div class="ia-item d3">주가정보<br><span style="font-size:9px">▼ 시세·시간대별·일자별·MarketView·등락·배당</span></div>
+            <div class="ia-item d3">재무정보<br><span style="font-size:9px">▼ 수주·매출·이익·재무제표·신용등급</span></div>
+            <div class="ia-item d3">IR Activity<br><span style="font-size:9px">▼ Earning Release·IR Presentation·등락보고서·감사보고서</span></div>
+            <div class="ia-item">기업탐방<br><small style="color:var(--amber)">정적 HTML 새창</small></div>
+          </div>
+        </div>
+
+        <!-- 인재채용 -->
+        <div class="ia-col">
+          <div class="ia-gnb-head gnb-인재채용">인재채용</div>
+          <div class="ia-arrow-spacer"></div>
+          <div class="ia-items">
+            <div class="ext-badge-full">⚠ 전체 외부 이탈<br>gsenc.recruiter.co.kr</div>
+            <div class="ia-item ext">인사제도 ↗</div>
+            <div class="ia-item ext">복리후생 ↗</div>
+            <div class="ia-item ext">직무소개 ↗</div>
+            <div class="ia-item ext">채용공고 ↗</div>
+            <div class="ia-item ext">채용프로세스 ↗</div>
+            <div class="ia-item ext">채용문의 ↗</div>
+            <div class="ia-item del">인재상 ×<br><small>주석 처리</small></div>
+          </div>
+        </div>
+
+        <!-- 홍보센터 -->
+        <div class="ia-col">
+          <div class="ia-gnb-head gnb-홍보센터">홍보센터</div>
+          <div class="ia-arrow-spacer"></div>
+          <div class="ia-items">
+            <div class="ia-item">News<br><small style="color:var(--ink-4)">(뉴스·보도자료)</small></div>
+            <div class="ia-item">홍보자료 ↗<br><small style="color:var(--ink-4)">GS건설 영상·사진·CI·BI·E-Brochure</small></div>
+            <div class="ia-item">Story</div>
+            <div class="ia-item">Gallery 시선</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 범례 -->
+      <div class="ia-legend">
+        <span><span class="ld" style="background:var(--bg);border:1px solid var(--line)"></span>일반 내부 메뉴</span>
+        <span><span class="ld" style="background:var(--amber-l);border:1px solid #E0C080"></span>3depth 하위 메뉴 보유</span>
+        <span><span class="ld" style="background:var(--red-l);border:1px solid #F5C0BB"></span>외부 도메인 새창 ↗ (인재채용 전체 외부 이탈)</span>
+        <span><span class="ld" style="background:var(--line-l);border:1px solid var(--line)"></span>삭제·주석 처리된 항목 ×</span>
+        <span><span class="ld" style="background:var(--blue-l);border:1px solid #B8CEF0"></span>기타 비고 항목</span>
+        <span><span class="ld" style="background:rgba(201,122,0,.1);border:2px dashed #D4A040"></span>ESG 9개 서브메뉴 (보고서 목차 이식)</span>
+      </div>
+
+      <!-- 하단 핵심 이슈 -->
+      <div class="ia-issue-grid">
+        <div class="ia-issue-card">
+          <div class="ia-issue-num">① GNB 7개 과다</div>
+          <div class="ia-issue-title">Hick's Law 위반</div>
+          <div class="ia-issue-body">의사결정 시간 증가 · 벤치마크 평균 4~5개 · GNB 메뉴 수 최적화 필요</div>
+        </div>
+        <div class="ia-issue-card">
+          <div class="ia-issue-num">② ESG 9개 서브메뉴</div>
+          <div class="ia-issue-title">보고서 목차 그대로 이식</div>
+          <div class="ia-issue-body">사용자 목적과 불일치 · 정보 피로도 유발 · ESG 허브 랜딩으로 통합 필요</div>
+        </div>
+        <div class="ia-issue-card">
+          <div class="ia-issue-num">③ 채용 전체 외부 이탈</div>
+          <div class="ia-issue-title">모든 채용 메뉴가 외부 도메인</div>
+          <div class="ia-issue-body">gsenc.recruiter.co.kr · 브랜딩 공간 단절 · 내재화 또는 일관 브랜드 처리 필요</div>
+        </div>
+        <div class="ia-issue-card amber">
+          <div class="ia-issue-num" style="color:var(--amber)">④ 재무 데이터 나열</div>
+          <div class="ia-issue-title">HTML 테이블 수치만</div>
+          <div class="ia-issue-body">그래프·인포그래픽 없음 · 투자자 UX 취약 · 중기 개선 필요</div>
+        </div>
+        <div class="ia-issue-card amber">
+          <div class="ia-issue-num" style="color:var(--amber)">⑤ BBS URL 구조</div>
+          <div class="ia-issue-title">/pr/bbs/list.do?BbsId=</div>
+          <div class="ia-issue-body">SEO 색인 불리 · SNS 개별 공유 불가 · 의미론적 URL 전환 필요</div>
+        </div>
+        <div class="ia-issue-card amber">
+          <div class="ia-issue-num" style="color:var(--amber)">⑥ 정적 UI / 모션 없음</div>
+          <div class="ia-issue-title">5초 배너 슬라이더 수준</div>
+          <div class="ia-issue-body">Lighthouse 모바일 ~54점 · '혁신' 비전과 불일치 · 인터랙션 전면 개선 필요</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <div class="section">
+      <div class="sec-head"><div class="sec-num">2-2</div><div><div class="sec-title">GNB 메뉴별 주요 이슈 요약</div><div class="sec-en">Per-GNB Key Issues</div></div></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>GNB 메뉴</th><th>주요 하위 항목</th><th>처리 방식</th><th>핵심 이슈</th></tr></thead>
+        <tbody>
+          <tr><td><strong>회사소개</strong></td><td>CEO 인사말 / 비전과 핵심가치 / 경영이념 / 연혁 / 조직도 / 계열사 현황 / 오시는 길</td><td>내부 이동</td><td>Key Figures 미노출, 해외지사 지도 없음</td></tr>
+          <tr><td><strong>지속가능경영</strong></td><td>경영체계 / 안전·보건 / 환경 / 사회 / 지배구조 / GRI Index / 지속가능경영보고서</td><td>내부 이동</td><td><span class="badge b-red">HIGH</span> 9개 서브메뉴 — 내부 보고서 목차 이식</td></tr>
+          <tr><td><strong>사업영역</strong></td><td>플랜트 / 건축·주택 / 인프라 / 레저 / 프리패브 / 프로젝트 검색</td><td>내부 이동</td><td>전력 사업 항목 삭제됐으나 JS 코드 잔존, '레져' 오탈자</td></tr>
+          <tr><td><strong>기술개발</strong></td><td>기술전략 / 보유기술 / 연구시설</td><td>내부 이동</td><td>3개 서브메뉴로 볼륨 빈약, R&D 성과 데이터 부재</td></tr>
+          <tr><td><strong>투자정보</strong></td><td>경영정보 / 공시·주가·재무 / IR Activity / 기업탐방</td><td>일부 새창</td><td><span class="badge b-amb">MED</span> 3depth 과다 중첩, Quick Link 문구 오기재</td></tr>
+          <tr><td><strong>인재채용</strong></td><td>인사제도 / 복리후생 / 직무소개 / 채용공고 / 채용프로세스 / 채용문의</td><td><span class="badge b-red">⚠ 전부 외부 이탈</span></td><td>전 항목 gsenc.recruiter.co.kr — 세션 단절</td></tr>
+          <tr><td><strong>홍보센터</strong></td><td>News / 홍보자료 / Story / Gallery 시선</td><td>내부 이동</td><td>BBS URL 구조 → SEO 불리, 검색 기능 부재</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 03 — 홈 (메인)
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t3">
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">03</div><div><div class="sec-title">메인 페이지 (홈) 섹션별 진단</div><div class="sec-en">Main Page Section Analysis</div></div></div>
+    <div class="callout c-info" style="margin-bottom:20px">메인 페이지는 Header → Hero → mboxwrap → Our Business → Recruit → Story → About → QuickLink → Footer 순으로 구성됩니다.</div>
+
+    <div class="page-sections">
+      <div class="pcard">
+        <div class="pcard-name"><span class="badge b-red">HIGH</span> HEADER</div>
+        <div class="pcard-body">로고 + 유틸리티(qnb) + GNB 7개 + 메뉴 설명 GIF + 모바일 햄버거<br><br>메뉴 설명이 텍스트가 아닌 <strong>GIF 이미지</strong>로 처리되어 스크린리더 접근 불가.</div>
+        <div class="pprob">Sticky 헤더 미적용 — 스크롤 시 GNB 사라짐, 매번 상단 이동 필요</div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-name"><span class="badge b-red">HIGH</span> Hero 슬라이더</div>
+        <div class="pcard-body">bxSlider 3장 · fade · 5초 자동전환 / ESG등급·브랜드 슬로건·글로벌 메시지<br><br>슬라이드 텍스트가 이미지 burn-in → <strong>SEO·스크린리더 취약</strong></div>
+        <div class="pprob">CTA 버튼 전무 / Pause 버튼 없음 (WCAG 2.2.2 위반)</div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-name"><span class="badge b-amb">MED</span> mboxwrap (Hero 하단 4분할)</div>
+        <div class="pcard-body">Story 2건 / 주가 외부 iframe / About 링크 3개 / 채용공고 1건<br><br>Story는 Section 4(Story 섹션)와 <strong>동일 콘텐츠 중복</strong></div>
+        <div class="pprob">주가 위젯 외부 의존성 / 채용 URL 불일치</div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-name"><span class="badge b-amb">MED</span> Our Business</div>
+        <div class="pcard-body">bxSlider 5장 · 5초 자동전환 · 플랜트·건축주택·인프라·레저·프리패브<br><br>3단 레이아웃 → 모바일 가독성 낮음</div>
+        <div class="pprob">JS에 삭제된 '전력' 텍스트 잔존. bx-pager-link 인덱스 오류</div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-name"><span class="badge b-red">HIGH</span> Recruit 섹션</div>
+        <div class="pcard-body">인물 이미지 + 직무소개 탭 10개 + '입사지원서 작성하기' 버튼<br><br>탭 10개가 <strong>모두 동일 URL 연결</strong> → 탭 UI가 기능하지 않음</div>
+        <div class="pprob">부제 "GS건설과 함께 할 글로벌 인재를 찾고 있습니다" 주석 처리 비노출</div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-name"><span class="badge b-amb">MED</span> Story 섹션</div>
+        <div class="pcard-body">최신 6건 카드 리스트 (날짜·썸네일·제목)<br><br>mboxwrap Story와 <strong>동일 콘텐츠 2회 노출</strong></div>
+        <div class="pprob">이미지 alt 빈값 전체 — 스크린리더 콘텐츠 미전달</div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-name"><span class="badge b-blu">LOW</span> About GS E&C</div>
+        <div class="pcard-body">통합보고서 / e-Brochure / 홍보영상 카드 3개<br><br>기업 소개 실질 콘텐츠 없음. <strong>Key Figures 미노출</strong></div>
+        <div class="pprob">설립연도·매출·임직원 수 등 신뢰 수치 전혀 없음</div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-name"><span class="badge b-red">HIGH</span> Quick Link</div>
+        <div class="pcard-body">고객센터 / 투자정보 / 오시는 길</div>
+        <div class="pprob">투자정보 버튼에 지속가능경영 문구 오기재 — 투자자 오인 유발 (즉시 수정 필요)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 04 — 회사소개
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t4">
+  <div class="section">
+    <div class="menu-header gnb-회사소개">
+      <div class="mh-label">GS01 · 1Depth Menu Analysis</div>
+      <div class="mh-title">회사소개</div>
+      <div class="mh-sub">리뉴얼 목표: 기업 스토리와 신뢰 수치를 시각적으로 전달하는 브랜드 허브 구성</div>
+      <div class="submenu-tags">
+        <span class="sm-tag">CEO 인사말</span>
+        <span class="sm-tag">비전과 핵심가치</span>
+        <span class="sm-tag">경영이념</span>
+        <span class="sm-tag">연혁</span>
+        <span class="sm-tag">조직도</span>
+        <span class="sm-tag">계열사 현황</span>
+        <span class="sm-tag">오시는 길</span>
+        <span class="sm-tag">수상실적</span>
+        <span class="sm-tag">해외지사/법인현황</span>
+      </div>
+    </div>
+
+    <div class="callout c-err" style="margin-bottom:20px">⚠ 메인 페이지 포함 사이트 전체에 설립연도·매출·임직원 수 등 기업 핵심 수치가 전혀 노출되지 않습니다. 방문자(투자자·발주처·구직자)가 신뢰도를 한눈에 파악할 수 없는 상태입니다.</div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>현행 UX 문제점 vs 개선 방향</div>
+      <div class="ux-compare">
+        <div class="ux-col asis">
+          <div class="ux-col-head">🔍 현행 UX 문제점 (As-Is)</div>
+          <div class="ux-item">• 메인 페이지에서 기업 규모 수치(설립연도·매출·임직원)가 전혀 없어 신뢰 파악 불가</div>
+          <div class="ux-item">• 연혁이 텍스트 연도 목록으로만 표현 — 시각적 타임라인 없음</div>
+          <div class="ux-item">• 해외지사/법인현황이 텍스트 목록 — 지도 시각화 없음</div>
+          <div class="ux-item">• 수상실적이 목록 형태 — 카테고리·연도 필터 없음</div>
+          <div class="ux-item">• CEO 인사말이 정적 텍스트 위주 — 영상 메시지 없음</div>
+          <div class="ux-item">• 비전·핵심가치 페이지가 텍스트 선언문 수준 — 모션/인포그래픽 없음</div>
+          <div class="ux-item">• 7개 서브메뉴가 각각 독립 페이지 — 회사소개 원페이지 탐색 불가</div>
+        </div>
+        <div class="ux-col tobe">
+          <div class="ux-col-head">✅ 리뉴얼 개선 방향 (To-Be)</div>
+          <div class="ux-item">→ Hero 또는 About 섹션에 Key Figures (설립연도·$9.4B·5,483명·55국) 카운터 애니메이션</div>
+          <div class="ux-item">→ 스크롤 기반 Timeline UI 도입 (GSAP ScrollTrigger)</div>
+          <div class="ux-item">→ 인터랙티브 세계지도 핀맵으로 해외 진출 국가 시각화</div>
+          <div class="ux-item">→ 수상실적 카테고리·연도별 필터링 카드 UI</div>
+          <div class="ux-item">→ CEO 짧은 영상 메시지 또는 인용구 애니메이션 도입</div>
+          <div class="ux-item">→ 비전 섹션에 모션 인포그래픽으로 6대 핵심가치 시각화</div>
+          <div class="ux-item">→ 회사소개 원페이지 구조 검토 (서브메뉴 탐색 부담 최소화)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>개선 우선순위</div>
+      <div class="star-grid">
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">비전·핵심가치 인포그래픽화</div><div class="star-desc">모션/애니메이션 비전 섹션 구성 — 중요도 상 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">연혁 타임라인 인터랙션</div><div class="star-desc">스크롤 기반 Timeline UI 도입 — 중요도 상 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">해외지사 세계지도 시각화</div><div class="star-desc">인터랙티브 핀맵 구현 — 중요도 중 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">수상실적 필터·카드 UI</div><div class="star-desc">카테고리·연도 필터링 UI — 중요도 중 / 긴급도 하</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">CEO 인사말 영상 도입</div><div class="star-desc">짧은 영상 메시지 또는 애니 인용구 — 중요도 중 / 긴급도 하</div></div>
+        <div class="star-card"><div class="star-val">★</div><div class="star-title">회사소개 원페이지 구조 검토</div><div class="star-desc">서브메뉴 탐색 부담 최소화 — 중요도 하 / 긴급도 하</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 05 — 지속가능경영
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t5">
+  <div class="section">
+    <div class="menu-header gnb-지속가능경영">
+      <div class="mh-label">GS02 · 1Depth Menu Analysis</div>
+      <div class="mh-title">지속가능경영 (ESG)</div>
+      <div class="mh-sub">리뉴얼 목표: ESG 성과의 데이터 기반 시각화, 이해관계자 신뢰 제고</div>
+      <div class="submenu-tags">
+        <span class="sm-tag">경영체계</span><span class="sm-tag">안전·보건</span><span class="sm-tag">환경</span>
+        <span class="sm-tag">사회</span><span class="sm-tag">지배구조</span><span class="sm-tag">GRI Index</span>
+        <span class="sm-tag">지속가능경영보고서</span><span class="sm-tag">공정거래자율준수</span><span class="sm-tag">안전보건경영</span>
+      </div>
+    </div>
+
+    <div class="callout c-warn" style="margin-bottom:16px">지속가능경영 메뉴는 <strong>8~9개 서브메뉴</strong>를 보유한 가장 복잡한 구조입니다. ESG 전략(Triple Bottom Line), UN Global Compact, DJSI 11년 연속 편입, CDP A-등급, KCGS 통합 A (환경 A / 사회 A+ / 지배구조 B+) 등 풍부한 성과 데이터가 있으나 텍스트 중심으로 표현되어 임팩트가 낮습니다.</div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>현행 UX 문제점 vs 개선 방향</div>
+      <div class="ux-compare">
+        <div class="ux-col asis">
+          <div class="ux-col-head">🔍 현행 UX 문제점 (As-Is)</div>
+          <div class="ux-item">• 8개 서브메뉴가 병렬 나열 — ESG 전체 그림 파악 어려움 (내부 보고서 목차 이식)</div>
+          <div class="ux-item">• ESG 핵심 지표 (CDP A-, KCGS 통합 A등급, DJSI 11년)가 텍스트로만 표기</div>
+          <div class="ux-item">• 지속가능경영보고서가 단순 PDF 링크만 제공</div>
+          <div class="ux-item">• 안전보건 4단계 체계가 텍스트+표로만 설명</div>
+          <div class="ux-item">• 온실가스 감축 31.86% 등 환경 수치가 나열만 됨</div>
+          <div class="ux-item">• 사회공헌 활동이 설명 텍스트 위주 — 공감 부족</div>
+          <div class="ux-item">• 서브메뉴 간 연계성 없어 사용자 흐름 단절</div>
+        </div>
+        <div class="ux-col tobe">
+          <div class="ux-col-head">✅ 리뉴얼 개선 방향 (To-Be)</div>
+          <div class="ux-item">→ ESG 대시보드 랜딩 페이지 신설 (E·S·G 3축 요약 + 서브메뉴 진입)</div>
+          <div class="ux-item">→ CDP·KCGS·DJSI 등 주요 ESG 등급을 배지+그래프로 시각화</div>
+          <div class="ux-item">→ 통합보고서 페이지를 인터랙티브 리포트 형태로 강화</div>
+          <div class="ux-item">→ 안전문화 4단계를 단계별 애니메이션 다이어그램으로 표현</div>
+          <div class="ux-item">→ 온실가스 감축 실적을 연도별 차트로 데이터 시각화</div>
+          <div class="ux-item">→ 사회공헌 활동에 이미지 갤러리 + 수혜자 스토리 추가</div>
+          <div class="ux-item">→ ESG 테마별 관련 서브메뉴 연결 탐색 경로 제공</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>개선 우선순위</div>
+      <div class="star-grid">
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">ESG 대시보드 랜딩 신설</div><div class="star-desc">E·S·G 3축 핵심 지표 한눈에 파악 — 중요도 상 / 긴급도 상</div></div>
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">ESG 등급·지표 시각화</div><div class="star-desc">배지·차트 등 데이터 비주얼 도입 — 중요도 상 / 긴급도 상</div></div>
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">인터랙티브 통합보고서</div><div class="star-desc">PDF를 웹 인터랙티브 형태로 보완 — 중요도 상 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">사회공헌 스토리텔링</div><div class="star-desc">이미지·영상·스토리 중심 재구성 — 중요도 중 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">안전보건 다이어그램</div><div class="star-desc">4단계 체계 애니메이션 시각화 — 중요도 중 / 긴급도 하</div></div>
+        <div class="star-card"><div class="star-val">★</div><div class="star-title">수상실적 카드 UI</div><div class="star-desc">기관·연도별 카드 그리드 — 중요도 하 / 긴급도 하</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 06 — 사업영역 & 기술개발
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t6">
+  <div class="section">
+    <div class="menu-header gnb-사업영역">
+      <div class="mh-label">GS03 · 1Depth Menu Analysis</div>
+      <div class="mh-title">사업영역</div>
+      <div class="mh-sub">리뉴얼 목표: 사업 역량을 임팩트 있게 전달, 프로젝트 포트폴리오 탐색성 극대화</div>
+      <div class="submenu-tags">
+        <span class="sm-tag">플랜트 사업</span><span class="sm-tag">건축·주택 사업</span><span class="sm-tag">인프라 사업</span>
+        <span class="sm-tag">레저 사업</span><span class="sm-tag">프리패브 사업</span><span class="sm-tag">프로젝트 검색</span>
+        <span class="sm-tag del">전력 사업 (삭제됨·JS잔존)</span>
+      </div>
+    </div>
+
+    <div class="callout c-warn" style="margin-bottom:16px">사업영역은 5개 사업 분야와 프로젝트 검색으로 구성됩니다. 각 사업 페이지는 사업 소개 텍스트와 대표 프로젝트 카드 2~3개를 제공합니다. 자이(Xi) 브랜드, 엘리시안, 해외 플랜트 프로젝트 등 다양한 레퍼런스가 있으나 탐색 구조가 제한적입니다.</div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>현행 UX 문제점 vs 개선 방향</div>
+      <div class="ux-compare">
+        <div class="ux-col asis">
+          <div class="ux-col-head">🔍 현행 UX 문제점 (As-Is)</div>
+          <div class="ux-item">• 5개 사업 분야가 각각 독립 페이지로 탐색 부담 가중</div>
+          <div class="ux-item">• 대표 프로젝트가 2~3건에 불과해 역량 전달 한계</div>
+          <div class="ux-item">• 프로젝트 정보가 텍스트+소규모 이미지로 임팩트 저하</div>
+          <div class="ux-item">• 프로젝트 검색 기능이 별도 페이지로 접근성 낮음</div>
+          <div class="ux-item">• 건축·주택(자이)와 기타 사업 간 톤앤매너 혼재</div>
+          <div class="ux-item">• 해외 프로젝트와 국내 프로젝트 구분 없이 나열</div>
+          <div class="ux-item">• <span class="badge b-amb">소스버그</span> '레져 사업' 오탈자 — GNB는 '레저', allmenu는 '레져' 혼용</div>
+          <div class="ux-item">• <span class="badge b-amb">소스버그</span> 삭제된 '전력' JS 코드 잔존</div>
+        </div>
+        <div class="ux-col tobe">
+          <div class="ux-col-head">✅ 리뉴얼 개선 방향 (To-Be)</div>
+          <div class="ux-item">→ 사업영역 허브 페이지(랜딩)에서 5개 사업 카드 그리드로 통합 진입</div>
+          <div class="ux-item">→ 각 사업별 프로젝트 갤러리(그리드·리스트 전환) 확대 제공</div>
+          <div class="ux-item">→ 프로젝트 상세 페이지: 풀스크린 이미지 + 핵심 스펙 인포그래픽</div>
+          <div class="ux-item">→ 프로젝트 검색을 GNB에서 접근 가능한 패싯 검색(필터)으로 개선</div>
+          <div class="ux-item">→ Xi 브랜드 페이지를 자이 전용 마이크로사이트 연결로 분리</div>
+          <div class="ux-item">→ 세계지도 위에 해외/국내 프로젝트 분포 시각화</div>
+          <div class="ux-item">→ 즉시 수정: '레져' → '레저' 소스 전체 일괄 치환</div>
+          <div class="ux-item">→ 즉시 수정: JS에서 '전력' 항목 제거, bx-pager-link 인덱스 재정비</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>개선 우선순위</div>
+      <div class="star-grid">
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">사업영역 허브 랜딩</div><div class="star-desc">5개 사업 카드 그리드 통합 진입 — 중요도 상 / 긴급도 상</div></div>
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">프로젝트 갤러리 확대</div><div class="star-desc">전체 프로젝트 그리드·필터 탐색 — 중요도 상 / 긴급도 상</div></div>
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">프로젝트 상세 풀스크린</div><div class="star-desc">풀스크린 이미지 + 스펙 인포그래픽 — 중요도 상 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">세계지도 프로젝트 분포</div><div class="star-desc">글로벌 역량 지도 시각화 — 중요도 중 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">Xi 브랜드 연동 개선</div><div class="star-desc">자이 마이크로사이트 연결 체계화 — 중요도 중 / 긴급도 하</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">프리패브 차별화 섹션</div><div class="star-desc">수치 기반 친환경·스마트 기술 강조 — 중요도 중 / 긴급도 하</div></div>
+      </div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <div class="section">
+      <div class="menu-header gnb-기술개발" style="margin-top:40px">
+        <div class="mh-label">GS04 · 1Depth Menu Analysis</div>
+        <div class="mh-title">기술개발</div>
+        <div class="mh-sub">리뉴얼 목표: 기술력 신뢰도 시각화, R&D 역량의 차별화된 커뮤니케이션</div>
+        <div class="submenu-tags">
+          <span class="sm-tag">기술전략</span><span class="sm-tag">보유기술</span><span class="sm-tag">연구시설</span>
+        </div>
+      </div>
+
+      <div class="callout c-info" style="margin-bottom:16px">기술개발 메뉴는 3개 서브메뉴(기술전략·보유기술·연구시설)로 비교적 단순하게 구성됩니다. 기술 비전은 텍스트와 구조도 형태로 설명되며, 보유기술은 Bridge, Tunnel, Water Treatment 등 8개 카테고리로 분류됩니다.</div>
+
+      <div class="card">
+        <div class="card-title"><span class="ctdot"></span>현행 UX 문제점 vs 개선 방향</div>
+        <div class="ux-compare">
+          <div class="ux-col asis">
+            <div class="ux-col-head">🔍 현행 UX 문제점 (As-Is)</div>
+            <div class="ux-item">• 3개 서브메뉴로 타 섹션 대비 메뉴 볼륨 빈약</div>
+            <div class="ux-item">• 기술전략이 텍스트 선언문 수준으로 전달력 부족</div>
+            <div class="ux-item">• 보유기술 8개 카테고리가 명칭만 나열</div>
+            <div class="ux-item">• 특허·논문·인증 현황 등 구체적 기술 성과 데이터 부재</div>
+            <div class="ux-item">• 연구시설 정보가 사양 텍스트 위주로 흥미도 낮음</div>
+            <div class="ux-item">• 스마트건설·BIM 등 신기술 현황이 별도 강조 없음</div>
+            <div class="ux-item">• 기술개발 ↔ 사업영역 간 연계 탐색 경로 없음</div>
+          </div>
+          <div class="ux-col tobe">
+            <div class="ux-col-head">✅ 리뉴얼 개선 방향 (To-Be)</div>
+            <div class="ux-item">→ 기술개발 내에 파트너사 기술제안·스마트건설 서브메뉴 추가 검토</div>
+            <div class="ux-item">→ 기술 비전을 로드맵 다이어그램(현재→미래) 형태로 시각화</div>
+            <div class="ux-item">→ 보유기술 카테고리별 클릭 시 세부 기술 + 적용 사례 연동</div>
+            <div class="ux-item">→ 특허 건수·인증 현황 등 주요 R&D 성과 지표 인포그래픽으로 노출</div>
+            <div class="ux-item">→ 연구시설 가상 투어(360° 이미지 또는 영상) 또는 갤러리 제공</div>
+            <div class="ux-item">→ Smart Construction·BIM·3D Printing 전용 하이라이트 섹션 신설</div>
+            <div class="ux-item">→ 보유기술 페이지에서 연관 사업영역 프로젝트로 바로 이동 링크 제공</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="ctdot"></span>개선 우선순위</div>
+        <div class="star-grid">
+          <div class="star-card"><div class="star-val">★★★</div><div class="star-title">기술 로드맵 다이어그램</div><div class="star-desc">현재·미래 기술 방향 시각화 — 중요도 상 / 긴급도 중</div></div>
+          <div class="star-card"><div class="star-val">★★★</div><div class="star-title">보유기술 카드+사례 연동</div><div class="star-desc">카테고리별 기술 상세 + 프로젝트 링크 — 중요도 상 / 긴급도 중</div></div>
+          <div class="star-card"><div class="star-val">★★★</div><div class="star-title">R&D 성과 지표 인포그래픽</div><div class="star-desc">특허·인증 수치 한눈에 제시 — 중요도 상 / 긴급도 중</div></div>
+          <div class="star-card"><div class="star-val">★★</div><div class="star-title">스마트건설 하이라이트</div><div class="star-desc">BIM·3D Printing 전용 섹션 — 중요도 중 / 긴급도 중</div></div>
+          <div class="star-card"><div class="star-val">★★</div><div class="star-title">연구시설 가상 투어·갤러리</div><div class="star-desc">시설 정보 시각화 강화 — 중요도 중 / 긴급도 하</div></div>
+          <div class="star-card"><div class="star-val">★★</div><div class="star-title">기술↔사업 연계 탐색</div><div class="star-desc">관련 프로젝트 바로가기 링크 — 중요도 중 / 긴급도 하</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 07 — 투자정보 & 홍보센터
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t7">
+  <div class="section">
+    <div class="menu-header gnb-투자정보">
+      <div class="mh-label">GS05 · 1Depth Menu Analysis</div>
+      <div class="mh-title">투자정보 (IR)</div>
+      <div class="mh-sub">리뉴얼 목표: 투자자·기관 대상 정보 접근성 극대화, 데이터 신뢰도 제고</div>
+      <div class="submenu-tags">
+        <span class="sm-tag">경영정보</span><span class="sm-tag">공시정보</span><span class="sm-tag">주가정보</span>
+        <span class="sm-tag">재무정보</span><span class="sm-tag">IR Activity</span><span class="sm-tag">기업탐방</span>
+      </div>
+    </div>
+
+    <div class="col2" style="margin-bottom:12px">
+      <div class="callout c-err">⚠ Quick Link '투자정보' 버튼에 지속가능경영 문구 오기재 — <em>"다양한 이해관계자들로부터 신뢰를 받기 위한 지속가능경영 원칙을 실천하고 있습니다"</em> (투자정보와 완전 무관) → <strong>즉시 수정 필요</strong></div>
+      <div class="callout c-warn">⚠ 투자정보 메뉴는 3depth까지 중첩됩니다 (공시정보·주가정보·재무정보·IR Activity 각각 3depth). IR 담당자가 원하는 정보 접근까지 클릭 수가 과다합니다.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>현행 UX 문제점 vs 개선 방향</div>
+      <div class="ux-compare">
+        <div class="ux-col asis">
+          <div class="ux-col-head">🔍 현행 UX 문제점 (As-Is)</div>
+          <div class="ux-item">• 공시정보·주가정보가 외부 데이터 미연동 상태 (주석 처리)</div>
+          <div class="ux-item">• 재무정보(수주잔고)가 표 형태만 제공, 트렌드 파악 어려움</div>
+          <div class="ux-item">• IR 자료실(PDF)이 목록형으로만 제공되어 탐색 불편</div>
+          <div class="ux-item">• 주주 구성 정보가 텍스트+표로만 표현</div>
+          <div class="ux-item">• 지배구조 핵심지표 준수 현황이 긴 표 형태로 가독성 저하</div>
+          <div class="ux-item">• 기업탐방예약 폼이 단순 입력 폼으로 CS 신뢰도 낮음</div>
+          <div class="ux-item">• 모바일에서 재무 데이터 표 가로 스크롤 문제 발생</div>
+          <div class="ux-item">• IR 담당자 연락처가 기업탐방예약 페이지에만 노출</div>
+        </div>
+        <div class="ux-col tobe">
+          <div class="ux-col-head">✅ 리뉴얼 개선 방향 (To-Be)</div>
+          <div class="ux-item">→ 주가 위젯 실시간 API 연동(네이버 금융 또는 FnGuide)</div>
+          <div class="ux-item">→ 수주잔고·신규수주 추이를 인터랙티브 차트(Highcharts 등)로 시각화</div>
+          <div class="ux-item">→ IR 자료실을 연도·종류별 필터 + 카드 UI + 미리보기로 개선</div>
+          <div class="ux-item">→ 주주 구성을 도넛 차트로 시각화</div>
+          <div class="ux-item">→ 지배구조 핵심지표를 아코디언 UI + 준수/미준수 배지로 재구성</div>
+          <div class="ux-item">→ 예약 현황 안내·예상 응답 시간 안내 추가</div>
+          <div class="ux-item">→ 반응형 데이터 테이블(가로 스크롤 + 컬럼 고정) 도입</div>
+          <div class="ux-item">→ 투자정보 랜딩에 IR 팀 연락처·FAQ 상시 노출 (IR 대시보드)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="ctdot"></span>개선 우선순위</div>
+      <div class="star-grid">
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">주가 실시간 위젯 연동</div><div class="star-desc">API 기반 주가·거래량 실시간 표시 — 중요도 상 / 긴급도 상</div></div>
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">재무 데이터 인터랙티브 차트</div><div class="star-desc">수주잔고·수주액 트렌드 시각화 — 중요도 상 / 긴급도 상</div></div>
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">IR 자료실 필터·카드 UI</div><div class="star-desc">연도·유형별 필터 + 미리보기 — 중요도 상 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★★</div><div class="star-title">반응형 데이터 테이블</div><div class="star-desc">모바일 재무표 가독성 보장 — 중요도 중 / 긴급도 상</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">주주 구성 도넛 차트</div><div class="star-desc">지분 구조 시각화 — 중요도 중 / 긴급도 중</div></div>
+        <div class="star-card"><div class="star-val">★★</div><div class="star-title">지배구조 지표 아코디언 UI</div><div class="star-desc">긴 표를 아코디언+배지로 개선 — 중요도 중 / 긴급도 중</div></div>
+      </div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <div class="section">
+      <div class="menu-header gnb-홍보센터" style="margin-top:40px">
+        <div class="mh-label">GS07 · 1Depth Menu Analysis</div>
+        <div class="mh-title">홍보센터 (Newsroom)</div>
+        <div class="mh-sub">리뉴얼 목표: 브랜드 미디어 허브로 전환, 콘텐츠 탐색·공유 경험 강화</div>
+        <div class="submenu-tags">
+          <span class="sm-tag">News</span><span class="sm-tag">홍보자료</span><span class="sm-tag">Story</span><span class="sm-tag">Gallery 시선</span>
+        </div>
+      </div>
+
+      <div class="callout c-warn" style="margin-bottom:16px">홍보센터는 News(보도자료 목록), 홍보자료(영상·사진·E-Brochure)로 구성됩니다. News 페이지는 텍스트 목록 형태이며, <strong>BBS URL 구조</strong>(<code>/pr/bbs/list.do?BbsId=</code>)로 SEO에 불리합니다. 최근 뉴스는 2026년 3월까지 업데이트되어 있습니다.</div>
+
+      <div class="card">
+        <div class="card-title"><span class="ctdot"></span>현행 UX 문제점 vs 개선 방향</div>
+        <div class="ux-compare">
+          <div class="ux-col asis">
+            <div class="ux-col-head">🔍 현행 UX 문제점 (As-Is)</div>
+            <div class="ux-item">• News 목록이 텍스트+날짜만 노출되어 흥미도와 발견성 저하</div>
+            <div class="ux-item">• 홍보영상·사진·E-Brochure가 별도 탭으로 분산되어 탐색 비효율</div>
+            <div class="ux-item">• 영상 콘텐츠가 내부 플레이어 없이 외부 링크 의존</div>
+            <div class="ux-item">• 사진 자료실의 카테고리 구분 및 검색 기능 부재</div>
+            <div class="ux-item">• E-Brochure가 단순 PDF 다운로드만 지원</div>
+            <div class="ux-item">• SNS 콘텐츠(YouTube·Instagram)와 뉴스룸 연동 없음</div>
+            <div class="ux-item">• 보도자료 검색 기능 부재로 과거 자료 탐색 어려움</div>
+            <div class="ux-item">• 미디어 자료 공유 기능(SNS 공유·링크 복사) 부재</div>
+          </div>
+          <div class="ux-col tobe">
+            <div class="ux-col-head">✅ 리뉴얼 개선 방향 (To-Be)</div>
+            <div class="ux-item">→ 뉴스 카드에 대표 이미지·카테고리 배지·요약문 포함</div>
+            <div class="ux-item">→ 홍보센터를 미디어 허브 랜딩으로 통합(News·영상·사진·브로셔 탭)</div>
+            <div class="ux-item">→ 자체 인라인 영상 플레이어(YouTube iframe embed) 도입</div>
+            <div class="ux-item">→ 사진 자료실에 카테고리 필터 + 라이트박스 갤러리 적용</div>
+            <div class="ux-item">→ E-Brochure를 플립북 형태의 온라인 뷰어로 제공</div>
+            <div class="ux-item">→ 홍보센터 내 SNS 피드(인스타그램·유튜브 최신 콘텐츠) 위젯 삽입</div>
+            <div class="ux-item">→ 뉴스 키워드 검색 + 연도·카테고리 필터 기능 추가</div>
+            <div class="ux-item">→ 기사별 SNS 공유 버튼 + URL 복사 기능 제공</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="ctdot"></span>개선 우선순위</div>
+        <div class="star-grid">
+          <div class="star-card"><div class="star-val">★★★</div><div class="star-title">뉴스 카드 UI 전환</div><div class="star-desc">이미지·카테고리·요약 포함 카드 — 중요도 상 / 긴급도 상</div></div>
+          <div class="star-card"><div class="star-val">★★★</div><div class="star-title">미디어 허브 통합 랜딩</div><div class="star-desc">News·영상·사진·브로셔 원스톱 — 중요도 상 / 긴급도 중</div></div>
+          <div class="star-card"><div class="star-val">★★★</div><div class="star-title">뉴스 검색·필터 기능</div><div class="star-desc">키워드·연도·카테고리 검색 — 중요도 상 / 긴급도 중</div></div>
+          <div class="star-card"><div class="star-val">★★</div><div class="star-title">E-Brochure 온라인 뷰어</div><div class="star-desc">플립북 형태 온라인 열람 — 중요도 중 / 긴급도 중</div></div>
+          <div class="star-card"><div class="star-val">★★</div><div class="star-title">SNS 피드 위젯 삽입</div><div class="star-desc">최신 인스타·유튜브 콘텐츠 노출 — 중요도 중 / 긴급도 하</div></div>
+          <div class="star-card"><div class="star-val">★</div><div class="star-title">SNS 공유 기능 추가</div><div class="star-desc">기사별 공유 버튼 제공 — 중요도 중 / 긴급도 하</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 08 — 공통 UX & 기술 이슈
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t8">
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">08</div><div><div class="sec-title">전사 공통 UX 문제점</div><div class="sec-en">Site-wide UX Issues · HIGH 6건 / MED 9건 / LOW 3건</div></div></div>
+
+    <div class="issue-grid">
+      <div class="icard h"><div class="ihead"><span class="badge b-red">HIGH</span><span class="ititle">Sticky 헤더 미적용</span></div><div class="ibody">스크롤 시 GNB가 화면에서 사라져 사용자가 매번 상단으로 이동해야 합니다. 긴 페이지에서의 탐색 효율이 매우 낮습니다.</div><div class="ifix">스크롤 시 GNB 고정(position:sticky). 스크롤 시 축소되는 Compact Header 적용</div></div>
+      <div class="icard h"><div class="ihead"><span class="badge b-red">HIGH</span><span class="ititle">인재채용 전체 외부 이탈</span></div><div class="ibody">GNB 인재채용 6개 항목 모두 gsenc.recruiter.co.kr 외부 도메인으로 이동합니다. 일관된 브랜드 경험이 단절됩니다.</div><div class="ifix">채용 콘텐츠 내재화 또는 일관된 브랜드 디자인 적용. gsenc.com/recruit 신설</div></div>
+      <div class="icard h"><div class="ihead"><span class="badge b-red">HIGH</span><span class="ititle">Xi 브랜드 접근 경로 부재</span></div><div class="ibody">GS건설의 핵심 B2C 브랜드인 자이(Xi)가 GNB에 없습니다. 헤더 소형 텍스트 링크만 존재하여 아파트 관심 고객이 정보를 찾기 어렵습니다.</div><div class="ifix">GNB 또는 메인 섹션에 Xi 전용 진입점 추가. Xi 브랜드 전용 마이크로사이트 연결로 분리</div></div>
+      <div class="icard h"><div class="ihead"><span class="badge b-red">HIGH</span><span class="ititle">기업 핵심 정보 미노출</span></div><div class="ibody">메인 페이지에서 설립 연도, 임직원 수, 매출, 시공 국가 수 등 기업 규모 수치가 전혀 없습니다.</div><div class="ifix">Hero 또는 About 섹션에 Key Figures(수치로 보는 GS건설) 추가</div></div>
+      <div class="icard h"><div class="ihead"><span class="badge b-red">HIGH</span><span class="ititle">투자정보 Quick Link 문구 오기재</span></div><div class="ibody">Quick Link '투자정보' 버튼에 지속가능경영 관련 문구가 그대로 들어가 있습니다. 투자자가 오해할 수 있어 즉시 수정이 필요합니다.</div><div class="ifix">즉시 수정: "수주·재무·공시·주가 정보를 확인하실 수 있습니다."로 교체</div></div>
+      <div class="icard h"><div class="ihead"><span class="badge b-red">HIGH</span><span class="ititle">viewport 사용자 확대 강제 차단</span></div><div class="ibody"><code>maximum-scale=1.0</code>, <code>minimum-scale=1.0</code> 설정으로 모바일에서 핀치 줌이 완전 차단됩니다. 시각 장애인·고령자의 텍스트 확대가 불가하며 WCAG 1.4.4를 직접 위반합니다.</div><div class="ifix">즉시 수정: maximum-scale 제거 → width=device-width, initial-scale=1.0만 유지</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">투자정보 3depth 과다 중첩</span></div><div class="ibody">투자정보 메뉴는 3depth까지 중첩됩니다. IR 담당자가 원하는 정보까지 클릭 수가 과다합니다.</div><div class="ifix">IR 전용 대시보드 페이지 구성. 주요 IR 정보를 1~2depth에서 접근 가능하도록 개선</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">GNB 메뉴 수 과다 (7개 병렬)</span></div><div class="ibody">GNB에 7개 메뉴가 병렬 나열되어 인지 부하가 과다합니다. 벤치마크 평균은 4~5개입니다.</div><div class="ifix">IA 재설계를 통해 핵심 메뉴 6개 이내로 그루핑 최적화</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">Breadcrumb 불일치</span></div><div class="ibody">현재 위치(Breadcrumb)가 일부 페이지에만 적용되어 있어 위치 파악이 어렵습니다.</div><div class="ifix">전 페이지 일관된 브레드크럼 및 현재 위치 강조</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">Story 콘텐츠 중복 노출</span></div><div class="ibody">메인의 mboxwrap Story 박스(2건)와 Section 4 Story(6건)가 동일 콘텐츠입니다.</div><div class="ifix">mboxwrap의 Story 박스를 News 최신 1건 + Highlight 형태로 변경. 중복 제거</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">Hero 슬라이더 CTA 부재</span></div><div class="ibody">3장의 Hero 슬라이드 모두 CTA(Call-to-Action) 버튼이 없습니다. 슬라이드 메시지로 유도해야 할 다음 행동이 없어 이탈률이 높습니다.</div><div class="ifix">각 슬라이드에 연관 페이지로의 CTA 버튼 추가. 슬라이드 텍스트를 HTML 텍스트 레이어로 전환</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">Our Business 3단 레이아웃 — 모바일 부적합</span></div><div class="ibody">좌이미지+중앙설명+우이미지 3단 구성이 모바일에서 가독성이 극히 낮습니다.</div><div class="ifix">모바일: 단일 컬럼 세로 스택 레이아웃으로 전환. 완전한 반응형(4단계 Breakpoint) 구현</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">폰트 가독성 미흡</span></div><div class="ibody">소형 기기에서 font-size 미조정으로 가독성이 낮습니다.</div><div class="ifix">본문 16px 이상, 모바일 최소 14px 이상 보장</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">직무소개 탭 10개 — 모두 동일 URL</span></div><div class="ibody">Recruit 섹션의 직무 탭 10개가 모두 동일한 URL로 연결됩니다. 탭을 클릭해도 다른 정보가 나오지 않아 UI가 기능하지 않습니다.</div><div class="ifix">직무별 개별 페이지 또는 탭 콘텐츠 전환 구현</div></div>
+      <div class="icard m"><div class="ihead"><span class="badge b-amb">MED</span><span class="ititle">외부 iframe 주가 위젯 의존성</span></div><div class="ibody">메인 4분할 박스의 Stock 위젯이 ir.gsifn.io 외부 서비스 iframe에 100% 의존합니다. 외부 장애 시 빈 박스 노출, 스크린리더 접근 불가합니다.</div><div class="ifix">자체 주가 API 연동 또는 한국거래소 공식 API 활용. Fallback 상태 정의</div></div>
+    </div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">8-2</div><div><div class="sec-title">웹 접근성 (WCAG 2.1 기준)</div><div class="sec-en">Accessibility Audit</div></div></div>
+    <div class="a11y-grid">
+      <div class="aitem fail"><div class="alabel">❌ viewport 확대 강제 차단 (WCAG 1.4.4)</div><div class="adetail">maximum-scale=1.0 설정으로 핀치 줌 완전 차단. 고령자·시각장애 사용자 텍스트 확대 불가. WA 인증 보유 중임에도 직접 위반.</div></div>
+      <div class="aitem fail"><div class="alabel">❌ 자동 재생 미디어 중지 불가 (WCAG 2.2.2)</div><div class="adetail">Hero/Our Business 슬라이더 자동 재생에 Pause 버튼 없음. 시각적 주의 분산 및 광과민 위험. prefers-reduced-motion 미적용.</div></div>
+      <div class="aitem fail"><div class="alabel">❌ Story 이미지 alt 빈값 (WCAG 1.1.1)</div><div class="adetail">Section 4 Story 카드 이미지 전체 alt="" 빈 처리. 스크린리더 콘텐츠 미전달. 이미지 4개 이상.</div></div>
+      <div class="aitem warn"><div class="alabel">⚠ 슬라이드 텍스트 — 이미지 alt에만 존재</div><div class="adetail">Hero 슬라이드 문구가 img alt에만 있고 HTML 텍스트 레이어 없음. SEO 손실 + 스크린리더 콘텐츠 전달 불완전.</div></div>
+      <div class="aitem ok"><div class="alabel">✓ 스킵 내비게이션 구현</div><div class="adetail">본문 바로가기 링크 구현됨. 키보드 탐색 사용자 지원.</div></div>
+      <div class="aitem ok"><div class="alabel">✓ WA 품질인증마크 보유</div><div class="adetail">한국웹접근성인증평가원(KA) 인증 보유. 그러나 일부 직접 위반 항목 개선 필요.</div></div>
+    </div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">8-3</div><div><div class="sec-title">SEO 문제 — 소스파일 직접 확인 4건</div><div class="sec-en">SEO Issues · Newly Discovered from Source Analysis</div></div></div>
+    <div class="callout c-err" style="margin-bottom:20px">⚠ 아래 4건은 7개 대표 페이지 소스파일 직접 분석을 통해 발견된 항목으로, <strong>검색 노출에 치명적인 영향을 줍니다.</strong></div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th style="width:60px">No.</th><th style="width:180px">항목</th><th>문제 내용</th><th>개선 방향</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge b-red">SEO-1</span></td>
+          <td><strong>전 페이지 canonical 홈 URL 고정</strong></td>
+          <td>7개 페이지 모두 canonical = "https://www.gsenc.com/"로 고정. 검색엔진이 서브페이지 전체를 홈의 중복으로 인식해 색인에서 제외함. <strong>가장 심각한 SEO 손실.</strong></td>
+          <td>페이지별 canonical을 실제 URL로 각각 설정</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-red">SEO-2</span></td>
+          <td><strong>전 페이지 meta description 완전 동일</strong></td>
+          <td>홈~홍보센터 7개 페이지 모두 동일 문구 사용. 페이지별 키워드 차별화 전무. 검색 결과에서 어떤 페이지도 구분 불가.</td>
+          <td>페이지별 고유 meta description 작성</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-amb">SEO-3</span></td>
+          <td><strong>전 페이지 og:title · og:description · og:url 동일</strong></td>
+          <td>소셜 공유 시 모든 페이지가 "GS건설" 단독 표시. og:url도 홈으로 고정. 소셜 미디어 바이럴 효과 제로.</td>
+          <td>페이지별 og:title / og:description / og:url 분리 적용</td>
+        </tr>
+        <tr>
+          <td><span class="badge b-amb">SEO-4</span></td>
+          <td><strong>Twitter Card 태그 전무</strong></td>
+          <td>전 페이지에 twitter:card, twitter:title, twitter:image 태그 없음. X(구 트위터) 공유 시 프리뷰 미표시.</td>
+          <td>twitter:card / title / description / image 태그 추가</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">8-4</div><div><div class="sec-title">소스코드 버그 목록 — 즉시 수정 가능 19건</div><div class="sec-en">Source Code Bugs · Immediate Fixes</div></div></div>
+    <div class="fix-item"><div class="fix-num">#1</div><div><span class="badge b-red">HIGH</span></div><div><div class="fix-loc">&lt;meta viewport&gt;</div><div class="fix-what">viewport 사용자 확대 강제 차단</div><div class="fix-det">maximum-scale=1.0, minimum-scale=1.0. 핀치 줌 완전 차단. WCAG 1.4.4 직접 위반.</div><div class="fix-act">maximum-scale 제거. width=device-width, initial-scale=1.0만 유지.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#2</div><div><span class="badge b-red">HIGH</span></div><div><div class="fix-loc">.mcust .mc_invest</div><div class="fix-what">투자정보 Quick Link 설명 문구 오기재</div><div class="fix-det">지속가능경영 문구가 투자정보 버튼에 삽입됨. 투자자 오인 유발.</div><div class="fix-act">"수주·재무·공시·주가 정보를 확인하실 수 있습니다."로 교체</div></div></div>
+    <div class="fix-item"><div class="fix-num">#3</div><div><span class="badge b-red">HIGH</span></div><div><div class="fix-loc">#section_3 .mrec_tit</div><div class="fix-what">Recruit 섹션 부제 주석 처리 비노출</div><div class="fix-det">"GS건설과 함께 할 글로벌 인재를 찾고 있습니다" 주석으로 비노출. Section 3 헤딩만 남음.</div><div class="fix-act">주석 해제 또는 최신 채용 슬로건으로 교체 후 노출</div></div></div>
+    <div class="fix-item"><div class="fix-num">#4</div><div><span class="badge b-red">HIGH</span></div><div><div class="fix-loc">#container (전체)</div><div class="fix-what">id="container" 2회 중복 선언 — HTML 표준 위반</div><div class="fix-det">동일 id가 연속 2회 선언됨. JS querySelector 예상치 못한 동작 유발.</div><div class="fix-act">첫 번째 &lt;div id="container"&gt; 제거. 단일 container 유지.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#5</div><div><span class="badge b-amb">MED</span></div><div><div class="fix-loc">.allmenu .all03</div><div class="fix-what">"레져 사업" 오탈자</div><div class="fix-det">allmenu에 '레져 사업' 오기재. GNB는 '레저 사업' 정상. 동일 페이지 내 혼용.</div><div class="fix-act">소스 전체 '레져' → '레저' 일괄 치환 (mognb도 확인)</div></div></div>
+    <div class="fix-item"><div class="fix-num">#6</div><div><span class="badge b-amb">MED</span></div><div><div class="fix-loc">#slider2 JS</div><div class="fix-what">Our Business 슬라이더 JS에 삭제된 '전력' 텍스트 잔존</div><div class="fix-det">실제 슬라이드 5개에 전력 항목 없음. JS에만 '전력' 텍스트 코드 잔존.</div><div class="fix-act">JS에서 '전력' 항목 제거. bx-pager-link 인덱스 0~4 재정비.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#7</div><div><span class="badge b-amb">MED</span></div><div><div class="fix-loc">Schema.org ld+json</div><div class="fix-what">sameAs Facebook URL — 미운영 채널 등록</div><div class="fix-det">Footer에 없는 Facebook URL이 Schema.org에만 등록. Google Knowledge Panel 오정보 가능.</div><div class="fix-act">Facebook URL 제거. 실운영 채널(YouTube·Instagram·NaverBlog)만 유지.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#8</div><div><span class="badge b-amb">MED</span></div><div><div class="fix-loc">.mbox_recruit .more a</div><div class="fix-what">채용 more 링크 — 내부 구버전 URL. GNB 채용은 recruiter.co.kr. 경로 불일치.</div><div class="fix-det">채용 페이지 내 링크 경로가 여러 곳에서 불일치.</div><div class="fix-act">채용 경로 단일화 결정 후 모든 채용 링크를 동일 URL로 통일.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#9</div><div><span class="badge b-blu">LOW</span></div><div><div class="fix-loc">.qnb2 파트너사기술제안</div><div class="fix-what">인라인 style color:#DA4197 삽입</div><div class="fix-det">브랜드 컬러와 무관한 색상. CSS 관리 체계 밖.</div><div class="fix-act">CSS 클래스 .util-highlight로 추출하여 stylesheet 통합 관리</div></div></div>
+    <div class="fix-item"><div class="fix-num">#10</div><div><span class="badge b-blu">LOW</span></div><div><div class="fix-loc">.mc_center .btn</div><div class="fix-what">고객센터 버튼 인라인 background 색상</div><div class="fix-det">나머지 버튼 GS Green과 불일치.</div><div class="fix-act">Button CSS에 secondary variant 정의 후 class 적용.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#11</div><div><span class="badge b-blu">LOW</span></div><div><div class="fix-loc">Section 4 Story img</div><div class="fix-what">Story 이미지 alt="" 빈값</div><div class="fix-det">스크린리더 콘텐츠 미전달. 이미지 4개 이상.</div><div class="fix-act">각 Story 이미지에 기사 제목 또는 요약을 alt로 삽입.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#12</div><div><span class="badge b-blu">LOW</span></div><div><div class="fix-loc">Our Business · Story img</div><div class="fix-what">loading="lazy" 미적용</div><div class="fix-det">페이지 하단 이미지들에 lazy 없음. 초기 로딩 시 뷰포트 외 이미지 일괄 다운로드.</div><div class="fix-act">뷰포트 아래 이미지 전체에 loading="lazy" 추가.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#13</div><div><span class="badge b-blu">LOW</span></div><div><div class="fix-loc">HTML 주석 (전체)</div><div class="fix-what">데드 코드 주석 다수 잔존</div><div class="fix-det">CEO 인사말·조직도·전력사업·인재상 등 HTML 주석으로 소스 잔존. 유지보수 혼란.</div><div class="fix-act">노출 여부 확정 후 불필요 주석 완전 제거. 버전 관리는 Git 이력으로 대체.</div></div></div>
+    <div class="fix-item"><div class="fix-num">#14</div><div><span class="badge b-red">HIGH</span></div><div><div class="fix-loc">&lt;html lang="Ko"&gt;</div><div class="fix-what">html lang 속성 비표준 — "Ko" → "ko"</div><div class="fix-det">표준은 소문자 "ko". 스크린리더·번역엔진 언어 감지 불안정. 전 페이지 동일.</div><div class="fix-act"><code>&lt;html lang="ko"&gt;</code>로 전 페이지 수정</div></div></div>
+    <div class="fix-item"><div class="fix-num">#15</div><div><span class="badge b-red">HIGH</span></div><div><div class="fix-loc">&lt;head&gt; (전체)</div><div class="fix-what">hreflang 태그 미적용</div><div class="fix-det">한국어/영어 두 버전이 존재하나 어느 페이지에도 hreflang 미설정. 구글이 언어별 페이지를 잘못 노출할 수 있음.</div><div class="fix-act">한국어/영어 각 페이지에 <code>&lt;link rel="alternate" hreflang="ko"&gt;</code> / <code>hreflang="en"</code> 추가</div></div></div>
+    <div class="fix-item"><div class="fix-num">#16</div><div><span class="badge b-amb">MED</span></div><div><div class="fix-loc">&lt;head&gt; script 태그</div><div class="fix-what">JS 전체 defer/async 없이 동기 로드 — 렌더 블로킹</div><div class="fix-det">JS 11개 모두 &lt;head&gt;에서 defer/async 없이 동기 로드. 렌더 블로킹 발생. IE8 대응 html5shiv.min.js도 여전히 로드 중.</div><div class="fix-act">서드파티 JS에 defer 또는 async 적용. html5shiv 제거. Critical CSS 인라인 전환</div></div></div>
+    <div class="fix-item"><div class="fix-num">#17</div><div><span class="badge b-amb">MED</span></div><div><div class="fix-loc">패밀리사이트·외부 링크 전체</div><div class="fix-what">외부 링크 전체 http:// — Mixed Content</div><div class="fix-det">Xi코리아·엘리시안·GS칼텍스·GS리테일 등 외부 링크 전체가 http://. 홈 기준 22건, 전체 500건 이상. Mixed Content 발생.</div><div class="fix-act">모든 외부 링크 <code>http://</code> → <code>https://</code> 일괄 전환</div></div></div>
+    <div class="fix-item"><div class="fix-num">#18</div><div><span class="badge b-amb">MED</span></div><div><div class="fix-loc">투자정보 &gt; 기업탐방 예약</div><div class="fix-what">기업탐방 예약 버튼 — Microsoft Forms 외부 이탈</div><div class="fix-det">기업탐방 예약 버튼이 forms.office.com(Microsoft Forms) 외부 서비스로 완전 이탈. 인재채용 외부이탈과 동일한 브랜드 단절.</div><div class="fix-act">기업탐방 예약 자체 폼 내재화 또는 gsenc.com 도메인 내 폼으로 대체</div></div></div>
+    <div class="fix-item"><div class="fix-num">#19</div><div><span class="badge b-blu">LOW</span></div><div><div class="fix-loc">Our Business · Recruit img</div><div class="fix-what">이미지맵(usemap) 구식 구현 — 반응형 불가</div><div class="fix-det">모바일 반응형 불가로 jquery.rwdImageMaps 플러그인으로 억지 대응 중. 접근성 취약.</div><div class="fix-act">이미지맵을 CSS Grid 기반 반응형 레이아웃으로 전환</div></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 09 — 전략 & 로드맵
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t9">
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">09</div><div><div class="sec-title">종합 개선 우선순위</div><div class="sec-en">Improvement Priority Matrix</div></div></div>
+    <div class="callout c-pur" style="margin-bottom:20px">💡 GS건설의 새 비전 "투명한 신뢰와 끊임없는 혁신"을 웹사이트 전면에 구현하는 것이 리뉴얼의 핵심 방향입니다.</div>
+
+    <div class="pri-section">
+      <div class="pri-section-title ps-p1">P1 즉시 (1주 이내)</div>
+      <div class="pri-row p1"><div><span class="badge b-red">P1</span></div><div><div class="ptitle">viewport 핀치줌 차단 해제</div><div class="pdesc">WCAG 직접 위반. 소스 1줄 수정. 법적 리스크 해소.</div></div><div class="parea">접근성·법적</div></div>
+      <div class="pri-row p1"><div><span class="badge b-red">P1</span></div><div><div class="ptitle">투자정보 Quick Link 오기재 수정</div><div class="pdesc">투자자가 오해할 수 있는 문구. 브랜드 신뢰와 직결.</div></div><div class="parea">콘텐츠·투자자</div></div>
+      <div class="pri-row p1"><div><span class="badge b-red">P1</span></div><div><div class="ptitle">canonical 전 페이지 실제 URL로 수정</div><div class="pdesc">현재 모든 서브페이지가 홈의 중복으로 인식됨. 검색 노출 치명 손실. 서브페이지 전체 색인 제외 위험.</div></div><div class="parea">SEO</div></div>
+      <div class="pri-row p1"><div><span class="badge b-red">P1</span></div><div><div class="ptitle">html lang="Ko" → "ko" 수정</div><div class="pdesc">비표준. 소스 1줄 수정. 스크린리더·SEO 동시 개선.</div></div><div class="parea">접근성·SEO</div></div>
+      <div class="pri-row p1"><div><span class="badge b-red">P1</span></div><div><div class="ptitle">id="container" 중복 HTML 표준 위반 수정</div><div class="pdesc">JS 오작동 유발 가능한 표준 위반.</div></div><div class="parea">기술·안정성</div></div>
+    </div>
+
+    <div class="pri-section">
+      <div class="pri-section-title ps-p2">P2 단기 (2~4주)</div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">Key Figures 섹션 신설</div><div class="pdesc">설립연도·매출·임직원·수주 등 핵심 수치 미노출. 신뢰 구축과 직결.</div></div><div class="parea">신뢰·브랜드</div></div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">meta description / og태그 페이지별 분리</div><div class="pdesc">7개 페이지 모두 동일 문구. 소셜·검색 발견성 개선.</div></div><div class="parea">SEO</div></div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">hreflang 태그 추가 (KR/EN)</div><div class="pdesc">글로벌 언어별 검색 노출 정상화. KR/EN 버전 구분.</div></div><div class="parea">SEO</div></div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">외부 링크 http:// → https:// 전환</div><div class="pdesc">Mixed Content 해소. 500건 이상 일괄 전환.</div></div><div class="parea">보안·SEO</div></div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">Hero 슬라이더 CTA 추가 및 HTML 텍스트 레이어화</div><div class="pdesc">SEO + 접근성 + 전환율 동시 개선.</div></div><div class="parea">SEO·접근성·CRO</div></div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">직무소개 탭 10개 각 직무 페이지 연결 수정</div><div class="pdesc">탭 UI가 기능하지 않는 심각한 UX 문제. 채용 성과 직결.</div></div><div class="parea">채용·UX</div></div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">Sticky 헤더 적용</div><div class="pdesc">스크롤 시 GNB 사라짐. 현대 웹 표준.</div></div><div class="parea">네비게이션·UX</div></div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">JS defer/async 적용 + html5shiv 제거</div><div class="pdesc">렌더 블로킹 해소. 초기 로딩 성능 개선.</div></div><div class="parea">성능</div></div>
+      <div class="pri-row p2"><div><span class="badge b-amb">P2</span></div><div><div class="ptitle">기업탐방 예약 내재화</div><div class="pdesc">Microsoft Forms 이탈 제거. 브랜드 단절 해소.</div></div><div class="parea">UX·브랜드</div></div>
+    </div>
+
+    <div class="pri-section">
+      <div class="pri-section-title ps-p3">P3 단기 (5~8주)</div>
+      <div class="pri-row p3"><div><span class="badge b-blu">P3</span></div><div><div class="ptitle">자동 재생 슬라이더 Pause 버튼 추가</div><div class="pdesc">WCAG 2.2.2 위반. 광과민·집중장애 사용자 영향.</div></div><div class="parea">접근성</div></div>
+      <div class="pri-row p3"><div><span class="badge b-blu">P3</span></div><div><div class="ptitle">뉴스 카드 UI 전환</div><div class="pdesc">이미지·카테고리·날짜 포함 카드. 발견성 향상.</div></div><div class="parea">홍보·UX</div></div>
+      <div class="pri-row p3"><div><span class="badge b-blu">P3</span></div><div><div class="ptitle">주가 실시간 위젯 API 연동</div><div class="pdesc">외부 iframe 의존 해소. 장애 시 빈 박스 방지.</div></div><div class="parea">투자정보·기술</div></div>
+      <div class="pri-row p3"><div><span class="badge b-blu">P3</span></div><div><div class="ptitle">ESG 대시보드 랜딩 신설</div><div class="pdesc">E·S·G 3축 핵심 지표 한눈에 파악.</div></div><div class="parea">ESG·브랜드</div></div>
+    </div>
+
+    <div class="pri-section">
+      <div class="pri-section-title ps-p4">P4~P6 중장기 (1~12개월)</div>
+      <div class="pri-row p4"><div><span class="badge b-grn">P4</span></div><div><div class="ptitle">완전한 반응형 레이아웃 구현</div><div class="pdesc">Fluid Grid, 4단계 Breakpoint. 모바일 퍼스트 설계.</div></div><div class="parea">기술·UX</div></div>
+      <div class="pri-row p4"><div><span class="badge b-grn">P5</span></div><div><div class="ptitle">기술 스택 현대화 (ASP.NET → Next.js)</div><div class="pdesc">레거시 기술 탈피. 리뉴얼 시 필수 전환.</div></div><div class="parea">기술 부채</div></div>
+      <div class="pri-row p4"><div><span class="badge b-grn">P5</span></div><div><div class="ptitle">의미론적 URL 구조 전환</div><div class="pdesc">파라미터 URL → /business/plant/ 형태. SEO 장기 성과.</div></div><div class="parea">SEO</div></div>
+      <div class="pri-row p4"><div><span class="badge b-grn">P6</span></div><div><div class="ptitle">IA 재편 + 풀 리뉴얼 완성</div><div class="pdesc">GNB 구조 재편 및 전체 디자인 현대화 완료.</div></div><div class="parea">전략</div></div>
+    </div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">9-2</div><div><div class="sec-title">웹사이트 개선 전략</div><div class="sec-en">Renewal Strategy</div></div></div>
+    <div class="imp-grid">
+      <div class="imp-card"><div class="imp-icon">🎨</div><div class="imp-title">① 비주얼 현대화</div><div class="imp-desc">풀스크린 브랜드 모션 히어로 + 비전 카피 적용. 스크롤 인터랙션 기반 섹션 전환(GSAP). 현행 네이비(#1B3A6B) 유지 + 여백·타이포·그리드 시스템 현대화. Lighthouse 모바일 목표 80점 이상.</div><div class="imp-tags"><span class="ftag ft-g">Hero 리디자인</span><span class="ftag ft-g">CTA 추가</span><span class="ftag ft-g">브랜드 컬러 통일</span><span class="ftag ft-a">이미지→HTML 텍스트</span></div></div>
+      <div class="imp-card"><div class="imp-icon">📊</div><div class="imp-title">② 콘텐츠 & 정보 구조</div><div class="imp-desc">기업 신뢰 회복을 위한 정보 투명성 강화가 핵심입니다. 메인 페이지에 Key Figures를 카운터 애니메이션으로 노출하고, ESG 성과를 수치로 시각화합니다. 사업 포트폴리오는 글로벌 레퍼런스 중심으로 재편합니다.</div><div class="imp-tags"><span class="ftag ft-g">Key Figures</span><span class="ftag ft-g">ESG 대시보드</span><span class="ftag ft-b">글로벌 포트폴리오</span><span class="ftag ft-p">데이터 시각화</span></div></div>
+      <div class="imp-card"><div class="imp-icon">🏗️</div><div class="imp-title">③ UX & 네비게이션</div><div class="imp-desc">Sticky 헤더 적용으로 탐색 효율을 높이고, 인재채용을 완전 내재화하여 브랜드 이탈을 방지합니다. 투자정보는 IR 대시보드로 재편해 핵심 지표를 1-2depth에서 즉시 확인할 수 있도록 합니다.</div><div class="imp-tags"><span class="ftag ft-g">Sticky GNB</span><span class="ftag ft-g">채용 내재화</span><span class="ftag ft-b">IR 대시보드</span><span class="ftag ft-a">Xi 진입점</span></div></div>
+      <div class="imp-card"><div class="imp-icon">⚙️</div><div class="imp-title">④ 기술 전략</div><div class="imp-desc">ASP.NET → Next.js / React 기반 현대 스택 전환. jQuery 1.11.3 → Vanilla JS 전환. URL 구조 파라미터 기반 → /story/[slug] 의미론적 URL 전환. GA4 + GTM 도입으로 글로벌 데이터 기반 UX 개선 기반 마련.</div><div class="imp-tags"><span class="ftag ft-p">Next.js 전환</span><span class="ftag ft-b">GA4+GTM</span><span class="ftag ft-g">SEO URL</span><span class="ftag ft-a">반응형</span></div></div>
+    </div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">9-3</div><div><div class="sec-title">실행 로드맵</div><div class="sec-en">Implementation Roadmap</div></div></div>
+    <div class="rm-grid">
+      <div class="rm-box phase1">
+        <div class="rm-label">Phase 1 — 즉시 수정</div>
+        <div class="rm-period">리뉴얼 전 즉시 (2주 이내)</div>
+        <div class="rm-item">viewport 핀치 줌 차단 해제 (#1)</div>
+        <div class="rm-item">투자정보 Quick Link 문구 수정 (#2)</div>
+        <div class="rm-item">id="container" 중복 선언 제거 (#4)</div>
+        <div class="rm-item">Recruit 섹션 부제 주석 해제 (#3)</div>
+        <div class="rm-item">'레져' → '레저' 오탈자 전체 수정 (#5)</div>
+        <div class="rm-item">JS '전력' 잔존 코드 제거 (#6)</div>
+        <div class="rm-item">Facebook sameAs 제거 (#7)</div>
+        <div class="rm-item">html lang="Ko" → "ko" 수정 (#14)</div>
+        <div class="rm-item">canonical 전 페이지 실제 URL 수정 (SEO-1)</div>
+        <div class="rm-item">Story 이미지 alt="" 보완 (#11)</div>
+        <div class="rm-item">loading="lazy" 이미지 일괄 적용 (#12)</div>
+      </div>
+      <div class="rm-box phase2">
+        <div class="rm-label">Phase 2 — 단기 개선</div>
+        <div class="rm-period">리뉴얼 착수 ~ 3개월</div>
+        <div class="rm-item">Sticky GNB 헤더 적용</div>
+        <div class="rm-item">meta description / og태그 페이지별 분리 (SEO-2·3)</div>
+        <div class="rm-item">Twitter Card 태그 추가 (SEO-4)</div>
+        <div class="rm-item">hreflang KR/EN 태그 추가 (#15)</div>
+        <div class="rm-item">외부 링크 http→https 전환 500건+ (#17)</div>
+        <div class="rm-item">Hero 슬라이더 HTML 텍스트 레이어화</div>
+        <div class="rm-item">각 슬라이드 CTA 버튼 추가</div>
+        <div class="rm-item">슬라이더 Pause/Play 버튼 추가</div>
+        <div class="rm-item">Key Figures 섹션 신설</div>
+        <div class="rm-item">직무 탭 10개 — 직무별 개별 링크 연결</div>
+        <div class="rm-item">채용 URL 경로 단일화</div>
+        <div class="rm-item">JS defer/async 적용 + html5shiv 제거 (#16)</div>
+        <div class="rm-item">기업탐방 예약 자체 폼 내재화 (#18)</div>
+        <div class="rm-item">주가 위젯 자체 API 연동 (iframe 제거)</div>
+        <div class="rm-item">GA4 + GTM 도입</div>
+        <div class="rm-item">언어 전환 버튼 가시성 개선</div>
+      </div>
+      <div class="rm-box phase3">
+        <div class="rm-label">Phase 3 — 전면 리뉴얼</div>
+        <div class="rm-period">6~12개월 중기 계획</div>
+        <div class="rm-item">기술 스택 전환 (ASP.NET → Next.js)</div>
+        <div class="rm-item">의미론적 URL 구조 전환</div>
+        <div class="rm-item">인재채용 완전 내재화</div>
+        <div class="rm-item">GNB 구조 재편 (7개 → 최적화)</div>
+        <div class="rm-item">글로벌 레퍼런스 섹션 신설</div>
+        <div class="rm-item">ESG 데이터 센터 + 인터랙티브 대시보드</div>
+        <div class="rm-item">Press Room + 미디어 키트 신설</div>
+        <div class="rm-item">영문 사이트 독립 콘텐츠 전략</div>
+        <div class="rm-item">디자인 시스템 구축 (컴포넌트 라이브러리)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">9-4</div><div><div class="sec-title">벤치마크 레퍼런스</div><div class="sec-en">Benchmark References</div></div></div>
+    <div class="bm-grid">
+      <div class="bm-card"><div class="bm-tag bm-kr">국내</div><div class="bm-name">삼성물산 건설</div><div class="bm-desc">GNB 5개 단순화. 풀블리드 이미지 + 수평 스크롤 포트폴리오 방식. GNB 최적화의 국내 참고 사례.</div></div>
+      <div class="bm-card"><div class="bm-tag bm-kr">국내</div><div class="bm-name">현대건설</div><div class="bm-desc">채용 페이지 내재화 — 기업 문화 영상 → 직무 소개 → 지원 흐름 완결. 인재채용 UX의 벤치마크.</div></div>
+      <div class="bm-card"><div class="bm-tag bm-kr">국내</div><div class="bm-name">GS건설 BEYOND A.</div><div class="bm-desc">iF 디자인 어워드 2025 수상 UI — 에디토리얼 카드·여백·타이포 계층. 코어 사이트 Story 섹션에 이식 검토.</div></div>
+      <div class="bm-card"><div class="bm-tag bm-gl">해외</div><div class="bm-name">Skanska (스웨덴)</div><div class="bm-desc">ESG 통합 스토리텔링: 환경·사회·지배구조를 프로젝트 스토리 안에 자연스럽게 내재화한 글로벌 ESG UX 레퍼런스.</div></div>
+      <div class="bm-card"><div class="bm-tag bm-gl">해외</div><div class="bm-name">Bechtel (미국)</div><div class="bm-desc">B2B 포트폴리오 복합 필터. IR 주요 KPI를 대형 숫자+그래프로 상단 배치. 투자정보 UX의 글로벌 기준.</div></div>
+      <div class="bm-card" style="background:var(--green-xl);border-color:#9FDBBC"><div class="bm-tag" style="background:var(--green-l);color:var(--green-d)">목표</div><div class="bm-name">GS E&C 리뉴얼 목표</div><div class="bm-desc">글로벌 Top Tier 건설사에 걸맞은 디지털 브랜드 구현. 투명한 신뢰 + 끊임없는 혁신을 웹 경험으로 완성.</div></div>
+    </div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <div class="card" style="margin-top:40px;background:linear-gradient(135deg,#0A1A0F,#0D2A18);border-color:rgba(46,158,104,.2)">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:12px;text-transform:uppercase">Analysis Methodology Note</div>
+    <p style="font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.75;margin-bottom:8px">본 보고서는 GS건설 웹사이트(www.gsenc.com) HTML 소스 직접 분석(Ctrl+U), 스크린리더 테스트, 글로벌 건설기업 UX 트렌드 비교를 통해 작성되었습니다.</p>
+    <p style="font-size:12.5px;color:rgba(255,255,255,.4);line-height:1.75">실제 리뉴얼 추진 시 사용자 리서치(설문·인터뷰), 경쟁사 벤치마킹, 접근성 자동화 점검 도구(Axe, WAVE 등) 결과를 추가적으로 반영하여 개선 방향을 확정하는 것을 권장합니다.</p>
+    <div style="margin-top:16px;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.25)">© 2026 GS E&C Corp. 본 문서는 내부 검토용으로 대외에 공개되지 않습니다.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 10 — 소스코드 버그 목록
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t10">
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">10</div>
+      <div>
+        <div class="sec-title">소스코드 버그 목록 — 즉시 수정 가능 19건</div>
+        <div class="sec-en">Source Code Bug List · Immediately Actionable</div>
+      </div>
+    </div>
+
+    <div class="callout c-err" style="margin-bottom:24px">
+      <span>⚠</span>
+      <span>7개 대표 페이지 소스파일 직접 분석에서 발견된 즉시 수정 가능한 버그·오류 목록입니다. <strong>#1·#4·#14·#15</strong>는 표준 위반 및 SEO 치명 문제로 <strong>최우선 처리</strong>를 권장합니다.</span>
+    </div>
+
+    <div class="col4" style="margin-bottom:28px">
+      <div class="kf-box"><div class="kf-num" style="color:var(--red)">5</div><div class="kf-label">HIGH 심각도</div><div class="kf-sub">#1 · #2 · #4 · #14 · #15</div></div>
+      <div class="kf-box"><div class="kf-num" style="color:var(--amber)">8</div><div class="kf-label">MED 심각도</div><div class="kf-sub">#3 · #5~#8 · #16~#18</div></div>
+      <div class="kf-box"><div class="kf-num" style="color:var(--blue)">6</div><div class="kf-label">LOW 심각도</div><div class="kf-sub">#9 ~ #13 · #19</div></div>
+      <div class="kf-box"><div class="kf-num" style="color:var(--green)">19</div><div class="kf-label">총 버그 건수</div><div class="kf-sub">즉시 수정 가능</div></div>
+    </div>
+
+    <!-- HIGH -->
+    <div class="pri-section">
+      <span class="pri-section-title ps-p1">HIGH — 즉시 수정 필수</span>
+      <div class="fix-item">
+        <div class="fix-num">1</div>
+        <div><div class="fix-loc">&#60;meta viewport&#62;</div><div><span class="badge b-red">HIGH</span></div></div>
+        <div>
+          <div class="fix-what">viewport 사용자 확대 강제 차단</div>
+          <div class="fix-det"><code>maximum-scale=1.0</code>, <code>minimum-scale=1.0</code> 설정으로 핀치 줌 완전 차단. 시각장애인·고령자의 텍스트 확대 불가. <strong>WCAG 1.4.4 직접 위반</strong>.</div>
+          <div class="fix-act"><code>maximum-scale</code> 제거 → <code>width=device-width, initial-scale=1.0</code>만 유지</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">2</div>
+        <div><div class="fix-loc">.mcust .mc_invest</div><div><span class="badge b-red">HIGH</span></div></div>
+        <div>
+          <div class="fix-what">투자정보 Quick Link 문구 오기재</div>
+          <div class="fix-det">지속가능경영 문구가 투자정보 버튼에 그대로 삽입되어 있음. 투자자가 버튼 설명을 보고 오해할 수 있는 즉각적 신뢰 손상 요소.</div>
+          <div class="fix-act">'수주·재무·공시·주가 정보를 확인하실 수 있습니다.'로 교체</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">4</div>
+        <div><div class="fix-loc">#container (전체)</div><div><span class="badge b-red">HIGH</span></div></div>
+        <div>
+          <div class="fix-what">id="container" 2회 중복 선언</div>
+          <div class="fix-det">HTML 표준 위반 — 동일 페이지 내 id 중복. JS <code>querySelector</code>가 예상치 못한 동작을 유발할 수 있으며 브라우저별 렌더링 차이 발생 가능.</div>
+          <div class="fix-act">첫 번째 <code>&lt;div id="container"&gt;</code> 제거. 단일 container 유지</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MED -->
+    <div class="pri-section">
+      <span class="pri-section-title ps-p2">MED — 단기 내 수정 권장</span>
+      <div class="fix-item">
+        <div class="fix-num">3</div>
+        <div><div class="fix-loc">#section_3 .mrec_tit</div><div><span class="badge b-amb">MED</span></div></div>
+        <div>
+          <div class="fix-what">Recruit 섹션 부제 주석 처리 비노출</div>
+          <div class="fix-det">"GS건설과 함께 할 글로벌 인재를 찾고 있습니다" 주석으로 비노출 중. 채용 섹션의 메시지 공백 상태.</div>
+          <div class="fix-act">주석 해제 또는 최신 채용 슬로건으로 교체 후 노출</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">5</div>
+        <div><div class="fix-loc">.allmenu .all03</div><div><span class="badge b-amb">MED</span></div></div>
+        <div>
+          <div class="fix-what">"레져 사업" 오탈자</div>
+          <div class="fix-det">allmenu에 '레져 사업' 오기재. GNB는 '레저 사업' 정상 표기. 동일 페이지 내 혼용 — 브랜드 정확성 손상.</div>
+          <div class="fix-act">소스 전체 '레져' → '레저' 일괄 치환</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">6</div>
+        <div><div class="fix-loc">#slider2 JS</div><div><span class="badge b-amb">MED</span></div></div>
+        <div>
+          <div class="fix-what">Our Business 슬라이더 — 삭제된 '전력' 텍스트 잔존</div>
+          <div class="fix-det">실제 슬라이드 5개에 전력 항목이 없음에도 JS 소스에 '전력' 텍스트 잔존. bx-pager-link 인덱스 오류 유발 가능.</div>
+          <div class="fix-act">JS에서 '전력' 항목 제거. bx-pager-link 인덱스 0~4 재정비</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">7</div>
+        <div><div class="fix-loc">Schema.org ld+json</div><div><span class="badge b-amb">MED</span></div></div>
+        <div>
+          <div class="fix-what">sameAs Facebook URL — 미운영 채널 등록</div>
+          <div class="fix-det">Footer에 Facebook이 없는데 Schema.org에만 등록. Google Knowledge Panel에 오정보 노출 가능. 미운영 채널 → 검색 결과 신뢰도 훼손.</div>
+          <div class="fix-act">Facebook URL 제거. 실운영 채널(YouTube·Instagram·NaverBlog)만 유지</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">8</div>
+        <div><div class="fix-loc">.mbox_recruit .more a</div><div><span class="badge b-amb">MED</span></div></div>
+        <div>
+          <div class="fix-what">채용 more 링크 URL 불일치</div>
+          <div class="fix-det">메인의 채용 more 링크가 내부 구버전 URL 연결. GNB 채용은 recruiter.co.kr로 이동하여 경로 불일치.</div>
+          <div class="fix-act">채용 경로 단일화 결정 후 모든 채용 링크를 동일 URL로 통일</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOW -->
+    <div class="pri-section">
+      <span class="pri-section-title ps-p3">LOW — 코드 품질 개선</span>
+      <div class="fix-item">
+        <div class="fix-num">9</div>
+        <div><div class="fix-loc">.qnb2 파트너사기술제안</div><div><span class="badge b-blu">LOW</span></div></div>
+        <div>
+          <div class="fix-what">인라인 style color:#DA4197 삽입</div>
+          <div class="fix-det">브랜드 컬러와 무관한 색상값이 인라인으로 직접 삽입. CSS 관리 체계 밖.</div>
+          <div class="fix-act">CSS 클래스 <code>.util-highlight</code>로 추출하여 stylesheet 통합 관리</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">10</div>
+        <div><div class="fix-loc">.mc_center .btn</div><div><span class="badge b-blu">LOW</span></div></div>
+        <div>
+          <div class="fix-what">고객센터 버튼 인라인 background 색상</div>
+          <div class="fix-det">나머지 버튼 GS Green과 불일치. 인라인 스타일로 CSS 시스템 일관성 깨짐.</div>
+          <div class="fix-act">Button CSS에 secondary variant 정의 후 class 적용</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">11</div>
+        <div><div class="fix-loc">Section 4 Story img</div><div><span class="badge b-blu">LOW</span></div></div>
+        <div>
+          <div class="fix-what">Story 이미지 alt="" 빈값</div>
+          <div class="fix-det">스토리 섹션 이미지 전체 alt가 비어 있어 스크린리더 콘텐츠 미전달. 시각장애인 접근 불가.</div>
+          <div class="fix-act">각 Story 이미지에 기사 제목 또는 요약을 alt로 삽입</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">12</div>
+        <div><div class="fix-loc">Our Business · Story img</div><div><span class="badge b-blu">LOW</span></div></div>
+        <div>
+          <div class="fix-what">loading="lazy" 미적용</div>
+          <div class="fix-det">페이지 하단 이미지들에 lazy loading 없음. 초기 로딩 시 뷰포트 외 이미지 일괄 다운로드 → LCP 성능 저하.</div>
+          <div class="fix-act">뷰포트 아래 이미지 전체에 <code>loading="lazy"</code> 추가</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">13</div>
+        <div><div class="fix-loc">HTML 주석 (전체)</div><div><span class="badge b-blu">LOW</span></div></div>
+        <div>
+          <div class="fix-what">데드 코드 주석 다수 잔존</div>
+          <div class="fix-det">CEO 인사말·조직도·전력사업·인재상 등 HTML 주석으로 소스 잔존. 유지보수 혼란 유발. 소스 용량 불필요 증가.</div>
+          <div class="fix-act">노출 여부 확정 후 불필요 주석 완전 제거. 버전 관리는 Git 이력으로 대체</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HIGH (추가) -->
+    <div class="pri-section">
+      <span class="pri-section-title ps-p1">HIGH — 추가 발견 (표준·SEO 치명)</span>
+      <div class="fix-item">
+        <div class="fix-num">14</div>
+        <div><div class="fix-loc">&lt;html lang="Ko"&gt;</div><div><span class="badge b-red">HIGH</span></div></div>
+        <div>
+          <div class="fix-what">html lang 속성 비표준 — "Ko" (대문자)</div>
+          <div class="fix-det">표준은 소문자 <code>"ko"</code>. 스크린리더·번역엔진 언어 감지 불안정. 전 페이지 동일.</div>
+          <div class="fix-act"><code>&lt;html lang="ko"&gt;</code>로 전 페이지 수정</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">15</div>
+        <div><div class="fix-loc">&lt;head&gt; (전체)</div><div><span class="badge b-red">HIGH</span></div></div>
+        <div>
+          <div class="fix-what">hreflang 태그 미적용</div>
+          <div class="fix-det">한국어/영어 두 버전이 존재하나 어느 페이지에도 hreflang 미설정. 구글이 언어별 페이지를 잘못 노출.</div>
+          <div class="fix-act">각 페이지에 <code>&lt;link rel="alternate" hreflang="ko"&gt;</code> / <code>hreflang="en"</code> 추가</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MED (추가) -->
+    <div class="pri-section">
+      <span class="pri-section-title ps-p2">MED — 추가 발견 (성능·보안·UX)</span>
+      <div class="fix-item">
+        <div class="fix-num">16</div>
+        <div><div class="fix-loc">&lt;head&gt; script 태그</div><div><span class="badge b-amb">MED</span></div></div>
+        <div>
+          <div class="fix-what">JS 전체 defer/async 없이 동기 로드 — 렌더 블로킹</div>
+          <div class="fix-det">JS 11개 모두 &lt;head&gt;에서 defer/async 없이 동기 로드. 렌더 블로킹 발생. IE8 대응 html5shiv.min.js도 여전히 로드 중.</div>
+          <div class="fix-act">서드파티 JS에 defer 또는 async 적용. html5shiv 제거. Critical CSS 인라인 전환</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">17</div>
+        <div><div class="fix-loc">패밀리사이트·외부 링크 전체</div><div><span class="badge b-amb">MED</span></div></div>
+        <div>
+          <div class="fix-what">외부 링크 전체 http:// — Mixed Content</div>
+          <div class="fix-det">Xi코리아·엘리시안·GS칼텍스·GS리테일 등 외부 링크 전체가 http://. 홈 기준 22건, 전체 500건 이상. Mixed Content 발생.</div>
+          <div class="fix-act">모든 외부 링크 <code>http://</code> → <code>https://</code> 일괄 전환</div>
+        </div>
+      </div>
+      <div class="fix-item">
+        <div class="fix-num">18</div>
+        <div><div class="fix-loc">투자정보 &gt; 기업탐방 예약</div><div><span class="badge b-amb">MED</span></div></div>
+        <div>
+          <div class="fix-what">기업탐방 예약 — Microsoft Forms 외부 이탈</div>
+          <div class="fix-det">기업탐방 예약 버튼이 forms.office.com(Microsoft Forms)으로 완전 이탈. 채용 외부이탈과 동일한 브랜드 단절.</div>
+          <div class="fix-act">자체 폼 내재화 또는 gsenc.com 도메인 내 폼으로 대체</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOW (추가) -->
+    <div class="pri-section">
+      <span class="pri-section-title ps-p3">LOW — 추가 발견 (기술 부채)</span>
+      <div class="fix-item">
+        <div class="fix-num">19</div>
+        <div><div class="fix-loc">Our Business · Recruit img</div><div><span class="badge b-blu">LOW</span></div></div>
+        <div>
+          <div class="fix-what">이미지맵(usemap) 구식 구현 — 반응형 불가</div>
+          <div class="fix-det">모바일 반응형 불가로 jquery.rwdImageMaps 플러그인으로 억지 대응 중. 접근성 취약.</div>
+          <div class="fix-act">이미지맵을 CSS Grid 기반 반응형 레이아웃으로 전환</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 11 — 결론 및 제언
+══════════════════════════════════════ -->
+<div class="tab-panel" id="t11">
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-num">11</div>
+      <div>
+        <div class="sec-title">결론 및 제언</div>
+        <div class="sec-en">Conclusion & Recommendations</div>
+      </div>
+    </div>
+
+    <!-- 핵심 개선 방향 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title"><span class="ctdot"></span> 11-1 핵심 개선 방향 요약</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+
+        <div style="display:grid;grid-template-columns:32px 180px 1fr;gap:16px;align-items:start;padding:16px 18px;background:var(--navy-l);border:1px solid #B8CEF0;border-radius:10px">
+          <div style="font-family:var(--display);font-size:28px;color:var(--navy);line-height:1">01</div>
+          <div style="font-size:13px;font-weight:800;color:var(--navy);line-height:1.4">레거시 탈피 · 기술 현대화</div>
+          <div style="font-size:12.5px;color:var(--ink-3);line-height:1.7">jQuery 1.x / IE 대응 코드 제거, React/Next.js 기반 현대적 스택으로 전환. 완전한 반응형 및 모바일 퍼스트 설계를 통해 다양한 디바이스에서 최적의 경험 보장.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:32px 180px 1fr;gap:16px;align-items:start;padding:16px 18px;background:var(--green-xl);border:1px solid #9FDBBC;border-radius:10px">
+          <div style="font-family:var(--display);font-size:28px;color:var(--green);line-height:1">02</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green-d);line-height:1.4">데이터 시각화 · 신뢰도 강화</div>
+          <div style="font-size:12.5px;color:var(--ink-3);line-height:1.7">텍스트 중심의 정보 전달 방식을 ESG 대시보드, 재무 인터랙티브 차트, 프로젝트 갤러리, 세계지도 시각화 등 데이터 비주얼 중심으로 전환하여 기업 신뢰도와 역량 전달력 극대화.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:32px 180px 1fr;gap:16px;align-items:start;padding:16px 18px;background:var(--purple-l);border:1px solid #C8B0E0;border-radius:10px">
+          <div style="font-family:var(--display);font-size:28px;color:var(--purple);line-height:1">03</div>
+          <div style="font-size:13px;font-weight:800;color:var(--purple);line-height:1.4">콘텐츠 허브 · 탐색성 개선</div>
+          <div style="font-size:12.5px;color:var(--ink-3);line-height:1.7">각 메뉴를 랜딩 허브 → 상세 탐색 구조로 재설계. 사업영역·홍보센터 등에 필터·검색 기능을 추가하고, 메뉴 간 연계 탐색 경로를 강화하여 사용자의 정보 발견성과 체류 시간을 향상.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <!-- 기대 효과 -->
+    <div class="section">
+      <div class="sec-head" style="border-bottom-color:var(--line)">
+        <div class="sec-num" style="font-size:22px">11-2</div>
+        <div><div class="sec-title" style="font-size:16px">기대 효과</div></div>
+      </div>
+
+      <div class="col3">
+        <div class="imp-card">
+          <div class="imp-icon">🏆</div>
+          <div class="imp-title">브랜드 신뢰도 향상</div>
+          <div class="imp-desc">최신 디자인·기술 기반으로 글로벌 건설기업에 걸맞은 디지털 브랜드 구현.</div>
+          <div class="imp-tags"><span class="ftag ft-g">브랜드</span><span class="ftag ft-b">디자인</span></div>
+        </div>
+        <div class="imp-card">
+          <div class="imp-icon">⏱</div>
+          <div class="imp-title">사용자 체류 시간 증가</div>
+          <div class="imp-desc">인터랙티브 콘텐츠와 직관적 탐색 구조로 이탈률 감소 및 페이지뷰 향상.</div>
+          <div class="imp-tags"><span class="ftag ft-b">UX</span><span class="ftag ft-g">탐색성</span></div>
+        </div>
+        <div class="imp-card">
+          <div class="imp-icon">📈</div>
+          <div class="imp-title">투자자 신뢰도 강화</div>
+          <div class="imp-desc">IR 데이터 시각화 및 실시간 정보 제공으로 기관투자자 편의 제고.</div>
+          <div class="imp-tags"><span class="ftag ft-a">IR</span><span class="ftag ft-b">데이터</span></div>
+        </div>
+        <div class="imp-card">
+          <div class="imp-icon">🌿</div>
+          <div class="imp-title">ESG 커뮤니케이션 강화</div>
+          <div class="imp-desc">ESG 대시보드 및 통합보고서 인터랙티브화로 이해관계자 소통 강화.</div>
+          <div class="imp-tags"><span class="ftag ft-g">ESG</span><span class="ftag ft-p">인터랙션</span></div>
+        </div>
+        <div class="imp-card">
+          <div class="imp-icon">👥</div>
+          <div class="imp-title">채용 경쟁력 제고</div>
+          <div class="imp-desc">기술개발·사업역량 시각화 및 채용 허브 내재화로 우수 인재 유인 효과.</div>
+          <div class="imp-tags"><span class="ftag ft-p">채용</span><span class="ftag ft-g">브랜딩</span></div>
+        </div>
+        <div class="imp-card">
+          <div class="imp-icon">📱</div>
+          <div class="imp-title">모바일 접근성 확보</div>
+          <div class="imp-desc">완전한 반응형 전환으로 모바일 사용자 경험 수준 대폭 향상.</div>
+          <div class="imp-tags"><span class="ftag ft-b">반응형</span><span class="ftag ft-r">WCAG</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <!-- 방법론 주석 + 푸터 -->
+    <div class="card" style="margin-top:40px;background:linear-gradient(135deg,#0A1A0F,#0D2A18);border-color:rgba(46,158,104,.2)">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:12px;text-transform:uppercase">Analysis Methodology Note</div>
+      <p style="font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.75;margin-bottom:8px">본 보고서는 GS건설 웹사이트(www.gsenc.com) HTML 소스 직접 분석(Ctrl+U), 스크린리더 테스트, 글로벌 건설기업 UX 트렌드 비교를 통해 작성되었습니다.</p>
+      <p style="font-size:12.5px;color:rgba(255,255,255,.4);line-height:1.75">실제 리뉴얼 추진 시 사용자 리서치(설문·인터뷰), 경쟁사 벤치마킹, 접근성 자동화 점검 도구(Axe, WAVE 등) 결과를 추가적으로 반영하여 개선 방향을 확정하는 것을 권장합니다.</p>
+      <div style="margin-top:16px;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.25)">© 2026 GS E&C Corp. 본 문서는 내부 검토용으로 대외에 공개되지 않습니다.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT — Tab Switching
+══════════════════════════════════════ -->
+<script>
+const btns = document.querySelectorAll('.tab-btn');
+const panels = document.querySelectorAll('.tab-panel');
+btns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    btns.forEach(b => b.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(target).classList.add('active');
+    // scroll tab button into view
+    btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    window.scrollTo({top: document.querySelector('.tab-nav').offsetTop - 10, behavior:'smooth'});
+  });
+});
+</script>
+</body>
+</html>
